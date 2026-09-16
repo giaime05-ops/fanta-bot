@@ -83,7 +83,7 @@ CALENDARIO_LEGA_1 = {
     9: {"nome": "9ª Giornata lega", "serie_a": 11, "matches": [{"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Luton Down", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "BENE EH MANCO MALEN", "score": "-"}]},
     10: {"nome": "10ª Giornata lega", "serie_a": 12, "matches": [{"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
     11: {"nome": "11ª Giornata lega", "serie_a": 13, "matches": [{"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "Luton Down", "score": "-"}]},
-    12: {"nome": "12ª Giornata lega", "serie_a": 14, "matches": [{"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Al-Qaeda United", "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    12: {"nome": "12ª Giornata lega", "serie_a": 14, "matches": [{"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
     13: {"nome": "13ª Giornata lega", "serie_a": 15, "matches": [{"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "Al-Qaeda United", "score": "-"}]},
     14: {"nome": "14ª Giornata lega", "serie_a": 16, "matches": [{"home": "Al-Qaeda United", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}]},
     15: {"nome": "15ª Giornata lega", "serie_a": 17, "matches": [{"home": "Deportivo Sa Carogna", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "CHIVUISMO", "away": "NicoPanz", "score": "-"}]},
@@ -100,7 +100,7 @@ CALENDARIO_LEGA_1 = {
     26: {"nome": "26ª Giornata lega", "serie_a": 28, "matches": [{"home": "Luton Down", "away": "Al-Qaeda United", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}]},
     27: {"nome": "27ª Giornata lega", "serie_a": 29, "matches": [{"home": "UwU", "away": "Luton Down", "score": "-"}, {"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}]},
     28: {"nome": "28ª Giornata lega", "serie_a": 30, "matches": [{"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
-    29: {"nome": "29ª Giornata lega", "serie_a": 31, "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}]},
+    29: {"nome": "29ª Giornata lega", "serie_a": 31, "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}]},
     30: {"nome": "30ª Giornata lega", "serie_a": 32, "matches": [{"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}]},
     31: {"nome": "31ª Giornata lega", "serie_a": 33, "matches": [{"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "score": "-"}]},
     32: {"nome": "32ª Giornata lega", "serie_a": 34, "matches": [{"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}]},
@@ -212,7 +212,7 @@ def get_fanta_session():
 def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_away):
     session = get_fanta_session()
     if not session:
-        return {"error": "Cookie FANTA_COOKIE non configurato o sessione scaduta"}
+        return {"error": "Cookie o sessione mancante"}
 
     url = f"https://apileague.fantacalcio.it/gaming/v1/teamLineup/{competition_id}/{round_num}/{serie_a_round}/{id_home}/{id_away}"
     try:
@@ -593,7 +593,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot pronto con Bearer Token autenticato.")
+    logger.info("Bot riavviato con sintassi dizionario corretta.")
     app.run_polling()
 
 
