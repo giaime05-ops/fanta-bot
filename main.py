@@ -40,26 +40,44 @@ LEGHE = {
     }
 }
 
-LOGIN_URL = "https://leghe.fantacalcio.it/api/v1/utenti/login"
+# Endpoint ufficiale API Fantacalcio verificato
+LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 
 
 def get_fanta_session():
-    """Effettua il login su Fantacalcio.it con le credenziali fornite."""
+    """Effettua il login su Fantacalcio.it tramite la nuova API e restituisce una sessione autenticata."""
     session = requests.Session()
     session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Referer": "https://leghe.fantacalcio.it/",
+        "Origin": "https://leghe.fantacalcio.it",
+        "Content-Type": "application/json",
     })
+
     payload = {
         "username": FANTA_EMAIL,
         "password": FANTA_PASSWORD,
-        "remember": True
     }
+
     try:
         res = session.post(LOGIN_URL, json=payload, timeout=10)
         if res.status_code == 200:
+            data = res.json()
+            # Estrazione token JWT dalla risposta JSON
+            token = (
+                data.get("token") 
+                or data.get("access_token") 
+                or (data.get("data", {}).get("token") if isinstance(data.get("data"), dict) else None)
+            )
+            
+            if token:
+                session.headers["Authorization"] = f"Bearer {token}"
+                logger.info("Login effettuato con successo e Bearer Token acquisito!")
+            else:
+                logger.info("Login effettuato con successo tramite cookie di sessione.")
             return session
-        logger.error(f"Login non riuscito: status {res.status_code} - {res.text}")
+        else:
+            logger.error(f"Login non riuscito: status {res.status_code} - {res.text}")
     except Exception as e:
         logger.error(f"Errore di rete durante il login su Fantacalcio: {e}")
     return None
@@ -120,7 +138,7 @@ def fetch_incontri(slug):
 
 
 def genera_immagine_formazioni(slug):
-    """Genera al volo una card grafica leggera (Pillow) con le formazioni."""
+    """Genera al volo una card grafica con le formazioni."""
     session = get_fanta_session()
     if not session:
         return None
@@ -215,8 +233,8 @@ async def cmd_formazioni(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def background_calcolo_checker(app):
-    """Loop asincrono in background: controlla ogni 20 minuti l'uscita dei voti/calcoli."""
-    await asyncio.sleep(10)  # Attesa iniziale prima del primo check
+    """Loop asincrono in background: controlla ogni 20 minuti l'uscita dei calcoli definitivi."""
+    await asyncio.sleep(10)  # Attesa all'avvio
     while True:
         try:
             session = get_fanta_session()
@@ -244,12 +262,12 @@ async def background_calcolo_checker(app):
         except Exception as e:
             logger.error(f"Errore nel loop di controllo calcolo: {e}")
         
-        # Aspetta 20 minuti (1200 secondi) prima del prossimo controllo
+        # Pausa di 20 minuti tra un controllo e l'altro
         await asyncio.sleep(1200)
 
 
 async def post_init(app):
-    """Avvia il task asincrono in background appena il bot è pronto."""
+    """Avvia il task asincrono in background non appena il bot è pronto."""
     asyncio.create_task(background_calcolo_checker(app))
 
 
@@ -258,7 +276,6 @@ def main():
         logger.error("TELEGRAM_BOT_TOKEN non configurato!")
         return
 
-    # Inizializzazione bot con post_init pulito
     app = ApplicationBuilder().token(TG_TOKEN).post_init(post_init).build()
 
     # Registrazione Comandi
