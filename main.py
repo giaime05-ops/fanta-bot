@@ -100,7 +100,7 @@ CALENDARIO_LEGA_1 = {
     26: {"nome": "26ª Giornata lega", "serie_a": 28, "matches": [{"home": "Luton Down", "away": "Al-Qaeda United", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}]},
     27: {"nome": "27ª Giornata lega", "serie_a": 29, "matches": [{"home": "UwU", "away": "Luton Down", "score": "-"}, {"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}]},
     28: {"nome": "28ª Giornata lega", "serie_a": 30, "matches": [{"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
-    29: {"nome": "29ª Giornata lega", "serie_a": 31, "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}]},
+    29: {"nome": "29ª Giornata lega", "serie_a": 31, "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}]},
     30: {"nome": "30ª Giornata lega", "serie_a": 32, "matches": [{"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}]},
     31: {"nome": "31ª Giornata lega", "serie_a": 33, "matches": [{"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "score": "-"}]},
     32: {"nome": "32ª Giornata lega", "serie_a": 34, "matches": [{"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}]},
@@ -234,69 +234,18 @@ def fetch_tabellini_analizzati(lega, round_num):
     serie_a_round = giornata_info.get("serie_a", round_num + 2)
     matches = giornata_info.get("matches", [])
 
-    report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
+    # Ispezioniamo la prima partita per vedere le chiavi del JSON
+    m = matches[0]
+    id_h = NAME_TO_ID.get(m["home"].lower())
+    id_a = NAME_TO_ID.get(m["away"].lower())
+    data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
 
-    for m in matches:
-        h_name = m["home"]
-        a_name = m["away"]
-        id_h = NAME_TO_ID.get(h_name.lower())
-        id_a = NAME_TO_ID.get(a_name.lower())
-        h_owner = OWNER_LOOKUP.get(h_name.lower(), "")
-        a_owner = OWNER_LOOKUP.get(a_name.lower(), "")
+    if not data or "error" in data:
+        err = data.get("error") if isinstance(data, dict) else "Dati vuoti"
+        return f"Errore chiamata: {err}"
 
-        if not id_h or not id_a:
-            continue
-
-        data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
-        score_text = m.get("score", "-")
-        p_h = m.get("p_home", "")
-        p_a = m.get("p_away", "")
-
-        report += f"\n⚔️ <b>{h_name}</b> ({h_owner}) <b>{p_h} [{score_text}] {p_a}</b> <b>{a_name}</b> ({a_owner})\n"
-
-        if not data or "error" in data:
-            err_msg = data.get("error", "Dati non disponibili") if isinstance(data, dict) else "Dati non disponibili"
-            report += f"  <i>⚠️ {err_msg}</i>\n"
-            continue
-
-        payload = data.get("data", data)
-        home_team_data = payload.get("home") or payload.get("teamHome") or payload.get("squadraCasa") or {}
-        away_team_data = payload.get("away") or payload.get("teamAway") or payload.get("squadraTrasferta") or {}
-
-        for team_label, t_data, t_owner in [(h_name, home_team_data, h_owner), (a_name, away_team_data, a_owner)]:
-            if not isinstance(t_data, dict):
-                continue
-            lineup = t_data.get("lineup") or t_data.get("players") or t_data.get("calciatori") or []
-            
-            titolari_top = []
-            panchina_rimpianti = []
-
-            for p in lineup:
-                p_name = p.get("playerName") or p.get("nome") or p.get("name", "Giocatore")
-                vote = float(p.get("fantaVote") or p.get("votoFanta") or p.get("vote") or 0.0)
-                is_starter = p.get("starter") or p.get("titolare") or p.get("isStarter") or False
-                goals = int(p.get("goals") or p.get("gol") or 0)
-                assists = int(p.get("assists") or p.get("assist") or 0)
-
-                if is_starter:
-                    if goals > 0:
-                        titolari_top.append(f"{p_name} ⚽x{goals} (voto {vote})")
-                    elif vote <= 4.5 and vote > 0:
-                        titolari_top.append(f"{p_name} 💩 (voto {vote})")
-                else:
-                    if goals > 0:
-                        panchina_rimpianti.append(f"GOL DI {p_name.upper()} (voto {vote})")
-                    elif assists > 0:
-                        panchina_rimpianti.append(f"Assist di {p_name} (voto {vote})")
-                    elif vote >= 7.5:
-                        panchina_rimpianti.append(f"{p_name} (voto {vote})")
-
-            if titolari_top:
-                report += f"  • {team_label}: {', '.join(titolari_top)}\n"
-            if panchina_rimpianti:
-                report += f"  ⚠️ <b>PANCHINA {t_owner.upper()}:</b> {', '.join(panchina_rimpianti)} lasciati fuori!\n"
-
-    return report
+    raw_str = json.dumps(data, ensure_ascii=False, indent=2)
+    return f"✅ <b>JSON RICEVUTO ({m['home']} vs {m['away']}):</b>\n<code>{raw_str[:3500]}</code>"
 
 
 def fetch_classifica(slug, competition_id):
@@ -365,23 +314,10 @@ def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
     Classifica attuale:
     {dati_classifica}
 
-    DATI UFFICIALI PARTITE, MARCATORI E PANCHINARI:
+    DATI UFFICIALI PARTITE:
     {dati_tabellino}
 
-    LINEE GUIDA RIGIDE:
-    1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
-    2. SE QUALCUNO HA LASCIATO GOL O BONUS IN PANCHINA, MASSACRALO SENZA PIETÀ! Fagli notare quanto è incompetente.
-    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
-    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
-    5. Struttura del messaggio:
-       - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
-       - Frase d'apertura tagliente.
-       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde citando chi ha segnato e chi ha sbagliato la formazione.
-       - 🍀 <b>LO SCULATO:</b> Chi vince col minimo sforzo.
-       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via punti lasciando gol in panca o chi è ultimo.
-       - 🤡 Chiusura con insulto corale.
-
-    Massimo 280 parole.
+    Massimo 280 parole. Usa tag HTML di Telegram (<b>, <i>).
     """
     try:
         res = model.generate_content(prompt)
@@ -486,7 +422,7 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Scarico formazioni e panchine ufficiali per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Recupero JSON per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
 
@@ -500,7 +436,7 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Specifica la lega: /test_recap 1 o /test_recap 2")
         return
 
-    await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
+    await update.message.reply_text(f"⏳ Generazione recap per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
     dati_tabellino = fetch_tabellini_analizzati(lega, 2)
     recap = genera_recap_ai(classifica_testo, dati_tabellino, lega["nome"])
@@ -593,7 +529,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot riavviato con sintassi dizionario corretta.")
+    logger.info("Bot pronto per ispezione chiavi JSON.")
     app.run_polling()
 
 
