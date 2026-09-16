@@ -367,6 +367,30 @@ async def cmd_rosa(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Squadra non trovata.")
 
 
+async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_TELEGRAM_ID:
+        return
+
+    session = get_fanta_session()
+    if not session:
+        await update.message.reply_text("❌ Login fallito.")
+        return
+
+    await update.message.reply_text("🔍 Interrogo i tabellini della 2ª giornata...")
+    url = "https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/incontri?id_competizione=206672&giornata=2"
+    r = session.get(url, timeout=10)
+
+    if r.status_code == 200:
+        data = r.json()
+        keys = list(data.keys()) if isinstance(data, dict) else "Formato Lista"
+        await update.message.reply_text(f"✅ Dati ricevuti! Struttura: <code>{keys}</code>\nAnteprima: <code>{str(data)[:200]}</code>", parse_mode="HTML")
+        logger.info(f"Tabellino completo: {data}")
+    else:
+        url_alt = "https://leghe.fantacalcio.it/servizi/v1_leghePartita/giornata?id_competizione=206672&giornata=2"
+        r_alt = session.get(url_alt, timeout=10)
+        await update.message.reply_text(f"Status incontri: {r.status_code}, Status alt: {r_alt.status_code}")
+
+
 async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type != "private" or update.effective_user.id != ADMIN_TELEGRAM_ID:
         return
@@ -465,8 +489,9 @@ def main():
     app.add_handler(CommandHandler(["calendario", "incontri"], cmd_calendario))
     app.add_handler(CommandHandler("rosa", cmd_rosa))
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
+    app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio pronto.")
+    logger.info("Bot avviato.")
     app.run_polling()
 
 
