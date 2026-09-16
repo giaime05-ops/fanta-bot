@@ -3,8 +3,7 @@ import io
 import logging
 import requests
 from bs4 import BeautifulSoup
-from PIL import Image, ImageDraw, ImageFont
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from PIL import Image, ImageDraw
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import google.generativeai as genai
@@ -111,7 +110,7 @@ def fetch_incontri(slug):
             return "Prossimi incontri non ancora disponibili."
         
         testo = "⚽ *PROSSIMI INCONTRI*\n\n"
-        for m in match_items[:4]:  # 4 partite per una lega da 8 squadre
+        for m in match_items[:4]:
             testo += f"⚔️ {m.get_text(separator=' vs ', strip=True)}\n"
         return testo
     except Exception as e:
@@ -130,7 +129,7 @@ def genera_immagine_formazioni(slug):
         res = session.get(url, timeout=10)
         soup = BeautifulSoup(res.text, "html.parser")
         
-        # Scheda grafica (rettangolo verde campo da calcio)
+        # Scheda grafica verde stile campo da calcio
         img = Image.new("RGB", (800, 600), color=(34, 139, 34))
         draw = ImageDraw.Draw(img)
         
@@ -158,7 +157,7 @@ def genera_immagine_formazioni(slug):
 
 def genera_recap_ai(dati_giornata):
     """Invia i punteggi al modello Gemini configurato per il commento satirico."""
-    model = genai.GenerativeModel("gemini-3.1-flash-lite")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     prompt = f"""
     Sei un commentatore sportivo caustico, cinico ed esilarante.
@@ -215,8 +214,9 @@ async def cmd_formazioni(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("⚠️ Impossibile generare la scheda formazioni al momento.")
 
 
-async def job_controllo_calcolo(app):
+async def job_controllo_calcolo(context: ContextTypes.DEFAULT_TYPE):
     """Job periodico: controlla se una nuova giornata è stata calcolata."""
+    app = context.application
     session = get_fanta_session()
     if not session:
         return
@@ -260,10 +260,9 @@ def main():
     app.add_handler(CommandHandler("incontri", cmd_incontri))
     app.add_handler(CommandHandler("formazioni", cmd_formazioni))
 
-    # Controllo periodico del calcolo ogni 20 minuti
-    scheduler = AsyncIOScheduler(timezone="Europe/Rome")
-    scheduler.add_job(job_controllo_calcolo, "interval", minutes=20, args=[app])
-    scheduler.start()
+    # Controllo periodico del calcolo ogni 20 minuti (1200 secondi) tramite JobQueue integrata
+    if app.job_queue:
+        app.job_queue.run_repeating(job_controllo_calcolo, interval=1200, first=10)
 
     logger.info("Bot Fantacalcio avviato con successo e in ascolto...")
     app.run_polling()
