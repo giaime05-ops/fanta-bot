@@ -1,5 +1,6 @@
 import os
 import asyncio
+import json
 import logging
 import requests
 import feedparser
@@ -203,76 +204,23 @@ def fetch_tabellini_analizzati(slug, competition_id, round_num):
     if not session:
         return "Sessione non disponibile."
 
-    # Endpoint ufficiale per i dati partita completi
     url = f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/incontri?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}"
     try:
         r = session.get(url, timeout=10)
         if r.status_code != 200:
             return f"Errore server {r.status_code}"
-        
-        data = r.json()
-        if not data.get("success"):
-            return f"Errore API: {data.get('error_msgs')}"
 
-        partite = data.get("data", [])
-        if not partite:
-            return "Nessuna partita trovata per questa giornata."
+        payload = r.json()
+        if not payload.get("success"):
+            return f"Errore API: {payload.get('error_msgs')}"
 
-        report = ""
-        for p in partite:
-            # Estrazione squadre e punteggi
-            h_name = p.get("squadra_casa", {}).get("nome", "Casa")
-            a_name = p.get("squadra_trasferta", {}).get("nome", "Trasferta")
-            h_owner = OWNER_LOOKUP.get(h_name.lower(), "")
-            a_owner = OWNER_LOOKUP.get(a_name.lower(), "")
-            
-            p_h = p.get("punti_casa", 0.0)
-            p_a = p.get("punti_trasferta", 0.0)
-            gol_h = p.get("gol_casa", 0)
-            gol_a = p.get("gol_trasferta", 0)
-
-            report += f"\n--- PARTITA: {h_name} ({h_owner}) [{gol_h}] {p_h} vs {p_a} [{gol_a}] {a_name} ({a_owner}) ---\n"
-
-            # Dettaglio calciatori Casa
-            for side, team_label in [("formazione_casa", h_name), ("formazione_trasferta", a_name)]:
-                formazione = p.get(side, {})
-                titolari = formazione.get("titolari", [])
-                panchinari = formazione.get("panchina", [])
-
-                # Marcatori ed espulsi titolari
-                titolari_top = []
-                for calz in titolari:
-                    n = calz.get("nome", "")
-                    v = calz.get("voto", 0.0)
-                    gf = calz.get("gol_fatti", 0)
-                    esp = calz.get("espulso", False)
-                    if gf > 0:
-                        titolari_top.append(f"{n} (GOL x{gf}, Voto {v})")
-                    elif esp:
-                        titolari_top.append(f"{n} (ESPULSO, Voto {v})")
-
-                # Bonus rimasti in panchina
-                panchina_rimpianti = []
-                for calz in panchinari:
-                    n = calz.get("nome", "")
-                    v = calz.get("voto", 0.0)
-                    gf = calz.get("gol_fatti", 0)
-                    ass = calz.get("assist", 0)
-                    if gf > 0:
-                        panchina_rimpianti.append(f"{n} (GOL IN PANCHINA! Voto {v})")
-                    elif ass > 0:
-                        panchina_rimpianti.append(f"{n} (Assist in panchina, Voto {v})")
-                    elif v >= 7.5:
-                        panchina_rimpianti.append(f"{n} (Voto {v} in panchina)")
-
-                report += f"• {team_label} Titolari salienti: {', '.join(titolari_top) if titolari_top else 'Nessun acuto'}\n"
-                if panchina_rimpianti:
-                    report += f"  ⚠️ RIMPIANTI PANCHINA: {', '.join(panchina_rimpianti)}\n"
-
-        return report
+        raw_data = payload.get("data")
+        # Restituiamo un estratto formattato per analizzare i campi esatti
+        preview_json = json.dumps(raw_data, ensure_ascii=False, indent=2)[:1800]
+        return f"STRUTTURA_RAW:\n{preview_json}"
     except Exception as e:
-        logger.error(f"Errore analisi tabellini: {e}")
-        return f"Errore interno: {e}"
+        logger.error(f"Errore tabellini: {e}")
+        return f"Errore parsing: {e}"
 
 
 def fetch_classifica(slug, competition_id):
@@ -341,20 +289,19 @@ def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
     Classifica attuale:
     {dati_classifica}
 
-    DATI REALI SULLA GIORNATA (VOTI, SCONTRI E PANCHINARI):
+    DATI REALI SULLA GIORNATA:
     {dati_tabellino}
 
     LINEE GUIDA RIGIDE:
     1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
-    2. INFOGNA CHI HA LASCIATO GOL/BONUS IN PANCHINA: se nei dati sopra c'è scritto 'RIMPIANTI PANCHINA', umilia quel presidente facendogli notare il punteggio sprecato.
-    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
-    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
-    5. Struttura del messaggio:
+    2. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
+    3. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
+    4. Struttura del messaggio:
        - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
        - Frase d'apertura tagliente.
-       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza 2 o 3 partite calde con titolari e panchinari.
-       - 🍀 <b>LO SCULATO:</b> Chi ha vinto col minimo sforzo o di misura.
-       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via la giornata o è ultimo.
+       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde.
+       - 🍀 <b>LO SCULATO:</b> Chi vince col minimo sforzo.
+       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via la giornata.
        - 🤡 Chiusura con insulto corale.
 
     Massimo 280 parole.
@@ -461,20 +408,15 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
-    if context.args:
-        for a in context.args:
-            if a.isdigit() and int(a) > 2:
-                giornata = int(a)
 
-    await update.message.reply_text(f"🔍 Interrogo i tabellini completi per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Recupero struttura per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega["slug"], lega["competition_id"], giornata)
-    
-    if "PARTITA:" in res:
-        anteprima = res[:900].replace("<", "&lt;").replace(">", "&gt;")
-        await update.message.reply_text(f"✅ <b>AUTENTICAZIONE E TABELLINI OK!</b>\n\n<code>{anteprima}...</code>", parse_mode="HTML")
+
+    if res.startswith("STRUTTURA_RAW:"):
+        snippet = res.replace("<", "&lt;").replace(">", "&gt;")[:3500]
+        await update.message.reply_text(f"✅ <b>DATI TROVATI:</b>\n\n<code>{snippet}</code>", parse_mode="HTML")
     else:
-        status_cookie = "Configurato" if FANTA_COOKIE else "NON impostato su Northflank"
-        await update.message.reply_text(f"❌ Impossibile leggere i tabellini.\nEsito: {res}\nStato FANTA_COOKIE: <b>{status_cookie}</b>", parse_mode="HTML")
+        await update.message.reply_text(f"❌ Esito: {res}")
 
 
 async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -486,7 +428,7 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Specifica la lega: /test_recap 1 o /test_recap 2")
         return
 
-    await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
+    await update.message.reply_text(f"⏳ Generazione recap per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
     tabellino_dati = fetch_tabellini_analizzati(lega["slug"], lega["competition_id"], 2)
     recap = genera_recap_ai(classifica_testo, tabellino_dati, lega["nome"])
@@ -579,7 +521,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio pronto con analisi tabellini e panchine attiva.")
+    logger.info("Bot avviato con logger diagnostico tabellino.")
     app.run_polling()
 
 
