@@ -98,7 +98,7 @@ CALENDARIO_LEGA_1 = {
     26: {"nome": "26ª Giornata lega", "serie_a": "28ª Giornata serie a", "matches": [{"home": "Luton Down", "away": "Al-Qaeda United", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}]},
     27: {"nome": "27ª Giornata lega", "serie_a": "29ª Giornata serie a", "matches": [{"home": "UwU", "away": "Luton Down", "score": "-"}, {"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}]},
     28: {"nome": "28ª Giornata lega", "serie_a": "30ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
-    29: {"nome": "29ª Giornata lega", "serie_a": "31ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}]},
+    29: {"nome": "29ª Giornata lega", "serie_a": "31ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}]},
     30: {"nome": "30ª Giornata lega", "serie_a": "32ª Giornata serie a", "matches": [{"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}]},
     31: {"nome": "31ª Giornata lega", "serie_a": "33ª Giornata serie a", "matches": [{"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "score": "-"}]},
     32: {"nome": "32ª Giornata lega", "serie_a": "34ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}]},
@@ -133,7 +133,7 @@ CALENDARIO_LEGA_2 = {
     22: {"nome": "22ª Giornata lega", "serie_a": "24ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "IchNusa", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "CHIVUISMO", "score": "-"}]},
     23: {"nome": "23ª Giornata lega", "serie_a": "25ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "IchNusa", "away": "COSTIERA ANALFITANA", "score": "-"}]},
     24: {"nome": "24ª Giornata lega", "serie_a": "26ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "CHIVUISMO", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "score": "-"}]},
-    25: {"nome": "25ª Giornata lega", "serie_a": "27ª Giornata serie a", "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "FC Pinolandia", "score": "-"}]},
+    25: {"nome": "25ª Giornata lega", "serie_a": "27ª Giornata serie a", "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
     26: {"nome": "26ª Giornata lega", "serie_a": "28ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
     27: {"nome": "27ª Giornata lega", "serie_a": "29ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "CHIVUISMO", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "HINTER X HINTER", "away": "IchNusa", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FC Pinolandia", "score": "-"}]},
     28: {"nome": "28ª Giornata lega", "serie_a": "30ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "FC Pinolandia", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
@@ -204,23 +204,27 @@ def fetch_tabellini_analizzati(slug, competition_id, round_num):
     if not session:
         return "Sessione non disponibile."
 
-    url = f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/incontri?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}"
-    try:
-        r = session.get(url, timeout=10)
-        if r.status_code != 200:
-            return f"Errore server {r.status_code}"
+    # Interroghiamo l'endpoint del round (giornata calcolata con tabellini e voti)
+    candidates = [
+        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/dettaglioround?alias_lega={slug}&id_competizione={competition_id}&round={round_num}",
+        f"https://leghe.fantacalcio.it/servizi/v1_leghePartita/round?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}",
+        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/giornata?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}",
+        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/incontri?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}&dettaglio=1"
+    ]
 
-        payload = r.json()
-        if not payload.get("success"):
-            return f"Errore API: {payload.get('error_msgs')}"
+    for url in candidates:
+        try:
+            r = session.get(url, timeout=7)
+            if r.status_code == 200:
+                payload = r.json()
+                if payload.get("success") and payload.get("data") != [round_num + 1]:
+                    raw_data = payload.get("data")
+                    preview = json.dumps(raw_data, ensure_ascii=False, indent=2)[:1500]
+                    return f"TROVATO SU {url.split('servizi/')[1][:30]}:\n{preview}"
+        except Exception:
+            continue
 
-        raw_data = payload.get("data")
-        # Restituiamo un estratto formattato per analizzare i campi esatti
-        preview_json = json.dumps(raw_data, ensure_ascii=False, indent=2)[:1800]
-        return f"STRUTTURA_RAW:\n{preview_json}"
-    except Exception as e:
-        logger.error(f"Errore tabellini: {e}")
-        return f"Errore parsing: {e}"
+    return "Nessuno degli endpoint ha restituito tabellini completi."
 
 
 def fetch_classifica(slug, competition_id):
@@ -412,11 +416,8 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await update.message.reply_text(f"🔍 Recupero struttura per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega["slug"], lega["competition_id"], giornata)
 
-    if res.startswith("STRUTTURA_RAW:"):
-        snippet = res.replace("<", "&lt;").replace(">", "&gt;")[:3500]
-        await update.message.reply_text(f"✅ <b>DATI TROVATI:</b>\n\n<code>{snippet}</code>", parse_mode="HTML")
-    else:
-        await update.message.reply_text(f"❌ Esito: {res}")
+    snippet = res.replace("<", "&lt;").replace(">", "&gt;")[:3500]
+    await update.message.reply_text(f"<code>{snippet}</code>", parse_mode="HTML")
 
 
 async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -521,7 +522,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot avviato con logger diagnostico tabellino.")
+    logger.info("Bot avviato con endpoint round.")
     app.run_polling()
 
 
