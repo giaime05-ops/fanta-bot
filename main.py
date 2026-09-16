@@ -11,6 +11,8 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 FANTA_EMAIL = os.getenv("FANTA_EMAIL")
 FANTA_PASSWORD = os.getenv("FANTA_PASSWORD")
 TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -24,7 +26,7 @@ CHAT_ID_LEGA_1 = int(os.getenv("CHAT_ID_LEGA_1", "0"))
 CHAT_ID_LEGA_2 = int(os.getenv("CHAT_ID_LEGA_2", "0"))
 
 TEAMS_MAP = {
-    # Lega 1
+    # Lega 1: Fanta4Reich
     18831834: {"name": "UwU", "owner": "gibo"},
     18883778: {"name": "NicoPanz", "owner": "Ciccio"},
     18833116: {"name": "Al-Qaeda United", "owner": "spoleto17"},
@@ -33,34 +35,95 @@ TEAMS_MAP = {
     18832350: {"name": "Luton Down", "owner": "Manuel"},
     18883572: {"name": "BENE EH MANCO MALEN", "owner": "Lamine Kialunga"},
     18885993: {"name": "RSA riabilitazione", "owner": "El vecho"},
-    # Lega 2
+    # Lega 2: Fantacalcio Stalloni
     19197193: {"name": "HINTER X HINTER", "owner": "gibo"},
     19196752: {"name": "DEMOCRAZIA CRISTANTE", "owner": "Cryan Bristante"},
     19213432: {"name": "COSTIERA ANALFITANA", "owner": "Manuel"},
     19196408: {"name": "CHIVUISMO", "owner": "Gabbo"},
-    19213197: {"name": "Scrotone", "owner": "loffredo03"},
-    19213459: {"name": "FREE SAPOMODORO FC", "owner": "Marco Priolo Pinolo"},
+    19197005: {"name": "Scrotone", "owner": "loffredo03"},
+    19209834: {"name": "FREE SAPOMODORO FC", "owner": "Marco Priolo Pinolo"},
     19176402: {"name": "IchNusa", "owner": "Giaime"},
-    19207011: {"name": "FC Pinolandia", "owner": "Ernesto Tavaroni"}
+    19197286: {"name": "FC Pinolandia", "owner": "Ernesto Tavaroni"}
 }
 
 OWNER_LOOKUP = {v["name"].strip().lower(): v["owner"] for v in TEAMS_MAP.values()}
+
+ROSE_LEGA_1 = {
+    "Deportivo Sa Carogna": ['Svilar', 'Caprile', 'Gollini', 'Mancini', 'Ramon', 'Ostigard', 'Valdepenas', 'Miranda J.', 'Koulierakis', 'De Winter', 'Bartesaghi', 'Calhanoglu', 'Baturina', 'Gudmundsson A.', 'Bernardeschi', 'Massolin', 'Sucic P.', 'Mbangula', 'Gonzalez N.', 'Ramos G.', 'Krstovic', 'Lontani', 'Yeboah J.', 'Camarda', 'Piccoli'],
+    "UwU": ['Vicario', 'Grabara', 'Perri', 'Chalobah T.', 'Pavlovic', 'Akanji', 'Di Lorenzo', 'Jimenez A.', 'Bernasconi', 'Comuzzo', 'Diego Carlos', 'Orsolini', 'Da Cunha', 'Alajbegovic', 'Mastantuono', 'Zaniolo', 'Cacciamani', 'Cambiaghi', 'Modric', 'Thuram', 'Beto', 'Pellegrino M.', 'Soulè', 'Dovbyk', 'Castro S.'],
+    "Luton Down": ['Maignan', 'Terracciano', 'Falcone', 'Wesley', 'Solet', 'Scalvini', 'Mangas', 'Hainaut', 'Tiago Gabriel', 'Coco', 'Theate', 'Frattesi', 'Vlasic', 'Samardzic', 'Conceicao', 'Chukwueze', 'Colpani', 'Adzic', 'Douglas Luiz', 'Kolo Muani', 'Kean', 'Berardi', 'Varela G.', 'Romero D.', 'Kevin Carlos'],
+    "CHIVUISMO": ['Martinez Jo.', 'Provedel', 'Di Gennaro', 'Bastoni', 'Kamara H.', 'Hermoso', 'Carlos Augusto', 'Celik', 'Cinquegrano', 'Bella-Kotchap', 'Mina', 'McTominay', 'Zaccagni', 'Jones C.', 'Romano', 'Fitz-Jim', 'Busio', 'Loftus-Cheek', 'Locatelli', 'Martinez L.', 'Laurientè', 'Bonny', 'Santos A.', 'Raspadori', 'Adams C.'],
+    "Al-Qaeda United": ['Carnesecchi', 'Palmisani', 'Sportiello', 'Gila', 'Vojvoda', 'Couto', 'Vasquez', 'Valeri', 'Sugawara', 'Kristensen T.', 'Obert', 'Rabiot', 'Atta', 'Ekkelenkamp', 'Ederson D.S.', 'Pisilli', 'Bernabè', 'Perrone', 'Volpato', 'Malen', 'Simeone', 'Vitinha O.', 'Kvernadze', 'Gnonto', 'Maldini'],
+    "BENE EH MANCO MALEN": ['Okoye', 'Muric', 'Skorupski', 'Dimarco', 'Bremer', 'Zappacosta', 'Spence', 'Bellanova', 'Bracaglia', 'Idzes', 'Zortea', 'Barella', 'Diouf', 'McKennie', 'Zambo Anguissa', 'Calò', 'Thorstvedt', 'Thuram K.', 'Adopo', 'Davis K.', 'Scamacca', 'Esposito F.P.', 'Yildiz', 'Diao', 'Colombo'],
+    "NicoPanz": ['Butez', 'Mandas', 'Sanchez Ro.', 'Kalulu', 'Molina N.', 'Stones', "N'Dicka", 'Belghali', 'Doekhi', 'Badiashile', 'Spinazzola', 'Paz N.', 'De Bruyne', 'Sarr P.', 'Zielinski', 'Moreira', 'Kessiè', 'Taylor K.', 'Konè M.', 'Hojlund', 'Dybala', 'De Ketelaere', 'Adams A.', 'Raimondo', 'Bowie'],
+    "RSA riabilitazione": ['Meret', 'De Gea', 'Milinkovic-Savic V.', 'Rrahmani', 'Bisseck', 'Tavares N.', 'Lucumì', 'Valle', 'Delprato', 'Lulli', 'Dodò', 'Pulisic', 'Mora', 'Milla', 'Rodriguez Je.', 'Saelemaekers', 'Gaetano', 'Rowe', 'Cancellieri', 'Douvikas', 'Woltemade', 'Pinamonti', 'Esposito Se.', 'Tourè E.', 'Cutrone']
+}
+
+ROSE_LEGA_2 = {
+    "IchNusa": ['Maignan', 'Palmisani', 'Terracciano', 'Molina N.', 'Ostigard', 'Couto', 'De Winter', 'Bernasconi', 'Hainaut', 'Lucumì', 'Theate', 'Baturina', 'McTominay', 'Ekkelenkamp', 'Calò', 'Sucic P.', 'Mbangula', 'Busio', 'Bernardeschi', 'Ramos G.', 'Simeone', 'Beto', 'Adams A.', 'Mendy P.', 'Piccoli'],
+    "CHIVUISMO": ['Martinez Jo.', 'Stankovic F.', 'Skorupski', 'Solet', 'Spence', 'Bisseck', 'Mangas', 'Dragusin', 'Hermoso', 'Belghali', 'Bella-Kotchap', 'Mora', 'Barella', 'Alajbegovic', 'Conceicao', 'Locatelli', 'Milla', 'Saelemaekers', 'Politano', 'Thuram', 'Kean', 'Pinamonti', 'Bonny', 'Varela G.', 'Vitinha O.'],
+    "DEMOCRAZIA CRISTANTE": ['Butez', 'Gollini', 'Sanchez Ro.', 'Wesley', 'Akanji', 'Di Lorenzo', 'Tavares N.', 'Kaiki', 'Bartesaghi', 'Miranda J.', 'Diego Carlos', 'Paz N.', 'Diouf', 'Moreira', 'Liberali', 'Cambiaghi', 'Colpani', 'Zalewski', 'Cristante', 'Dybala', 'Scamacca', 'Krstovic', 'Pellegrino M.', 'Diao', 'Soulè'],
+    "Scrotone": ['Provedel', 'De Gea', 'Mandas', 'Dimarco', 'Gila', 'Valle', 'Vasquez', 'Pavard', 'Zappacosta', 'Delprato', 'Carlos Augusto', 'De Bruyne', 'Vlasic', 'Goncalves P.', 'Zielinski', 'Rowe', 'Samardzic', 'Konè M.', 'Cacciamani', 'Douvikas', 'Davis K.', 'Berardi', 'Boga', 'Santos A.', 'Colombo'],
+    "HINTER X HINTER": ['Meret', 'Perri', 'Milinkovic-Savic V.', 'Rrahmani', 'Mancini', 'Pavlovic', 'Chalobah T.', 'Kempf', 'Tiago Gabriel', 'Kristensen T.', 'Spinazzola', 'Pulisic', 'Atta', 'Ederson D.S.', 'Adzic', 'Pisilli', 'Fazzini', 'Casadei', 'Sarr P.', 'Martinez L.', 'Laurientè', 'Yeboah J.', 'Neres', 'Tourè E.', 'Kvernadze'],
+    "FC Pinolandia": ['Carnesecchi', 'Okoye', 'Sportiello', 'Kalulu', "N'Dicka", 'Vojvoda', 'Lulli', 'Kamara H.', 'Scalvini', 'Ismajli', 'Balerdi', 'Mastantuono', 'Frattesi', 'Zaniolo', 'McKennie', 'Kessiè', 'Romano', 'Unai Gomez', 'Pellegrini Lo.', 'Kolo Muani', 'Woltemade', 'Castro S.', 'Esposito Se.', 'Raspadori', 'Bowie'],
+    "FREE SAPOMODORO FC": ['Svilar', 'Corvi', 'Falcone', 'Bremer', 'Stones', 'Mina', 'Bracaglia', 'Valeri', 'Pedraza', 'Jimenez A.', 'Monterisi', 'Rabiot', 'Orsolini', 'Zaccagni', 'Cissè A.', 'Gonzalez N.', 'Taylor K.', 'Vergara', 'Modric', 'Malen', 'Raimondo', 'Romero D.', 'De Ketelaere', 'Kevin Carlos', 'Dovbyk'],
+    "COSTIERA ANALFITANA": ['Vicario', 'Caprile', 'Grabara', 'Bastoni', 'Ramon', 'Valdepenas', 'Celik', 'Marcandalli', 'Comuzzo', 'Obert', 'Cambiaso', 'Calhanoglu', 'Da Cunha', 'Gudmundsson A.', 'Volpato', 'Jones C.', 'Gaetano', 'Bernabè', 'Baldanzi', 'Hojlund', 'Esposito F.P.', 'Yildiz', 'Lucca', 'Maldini', 'Adams C.']
+}
+
+def carica_calendario_da_excel(nome_file):
+    filepath = os.path.join(BASE_DIR, nome_file)
+    if not os.path.exists(filepath):
+        logger.warning(f"File calendario non trovato: {filepath}")
+        return {}
+    try:
+        df = pd.read_excel(filepath, sheet_name=0, header=None)
+        calendar = {}
+        for r in range(len(df)):
+            for col in [0, 6]:
+                val = str(df.iloc[r, col])
+                if "Giornata lega" in val:
+                    g_num = int(val.strip().split('ª')[0])
+                    serie_a = str(df.iloc[r, col + 2]).strip()
+                    matches = []
+                    for m in range(1, 5):
+                        if r + m < len(df):
+                            home = str(df.iloc[r + m, col]).strip()
+                            p_home = df.iloc[r + m, col + 1]
+                            p_away = df.iloc[r + m, col + 2]
+                            away = str(df.iloc[r + m, col + 3]).strip()
+                            score = str(df.iloc[r + m, col + 4]).strip()
+                            if home and away and home != 'nan' and away != 'nan':
+                                matches.append({
+                                    "home": home,
+                                    "away": away,
+                                    "p_home": p_home if pd.notna(p_home) else None,
+                                    "p_away": p_away if pd.notna(p_away) else None,
+                                    "score": score if score != 'nan' else '-'
+                                })
+                    calendar[g_num] = {"nome": val.strip(), "serie_a": serie_a, "matches": matches}
+        return calendar
+    except Exception as e:
+        logger.error(f"Errore parsing calendario {filepath}: {e}")
+        return {}
+
+CALENDARIO_LEGA_1 = carica_calendario_da_excel("calendario_lega1.xlsx")
+CALENDARIO_LEGA_2 = carica_calendario_da_excel("calendario_lega2.xlsx")
 
 LEGHE = {
     CHAT_ID_LEGA_1: {
         "slug": "fanta4reich",
         "competition_id": 206672,
         "nome": "Fanta4Reich",
-        "excel_calendario": "Calendario_Campionato-Nazista.xlsx",
-        "excel_rose": "fanta4reich-rosters-1789585342102.xlsx",
+        "calendario": CALENDARIO_LEGA_1,
+        "rose": ROSE_LEGA_1,
         "ultima_giornata": 0
     },
     CHAT_ID_LEGA_2: {
         "slug": "fantacalcio-stalloni-26-27",
         "competition_id": 320101,
         "nome": "Fantacalcio Stalloni",
-        "excel_calendario": "Calendario_FANTASTALLONI-26-27.xlsx",
-        "excel_rose": "fantacalcio-stalloni-26-27-rosters-1789585334790.xlsx",
+        "calendario": CALENDARIO_LEGA_2,
+        "rose": ROSE_LEGA_2,
         "ultima_giornata": 0
     }
 }
@@ -93,36 +156,6 @@ def get_fanta_session():
     return None
 
 
-def parse_rosters_file(filepath):
-    """Carica la lista giocatori per ogni squadra dal file Excel delle rose."""
-    if not os.path.exists(filepath):
-        return {}
-    try:
-        df = pd.read_excel(filepath, sheet_name=0)
-        rosters = {}
-        for c_idx in range(0, len(df.columns), 3):
-            team_name = df.columns[c_idx].strip()
-            players = df.iloc[:, c_idx].dropna().astype(str).tolist()
-            players = [p.strip() for p in players if p.strip() and p.strip() != 'nan']
-            rosters[team_name] = players
-        return rosters
-    except Exception as e:
-        logger.error(f"Errore lettura rose {filepath}: {e}")
-        return {}
-
-
-def get_player_owner(player_name, filepath_rose):
-    """Trova quale squadra e quale proprietario possiede il calciatore indicato."""
-    rose = parse_rosters_file(filepath_rose)
-    p_clean = player_name.lower().strip()
-    for team, players in rose.items():
-        for p in players:
-            if p_clean in p.lower() or p.lower() in p_clean:
-                owner = OWNER_LOOKUP.get(team.lower(), "Presidente")
-                return team, owner, p
-    return None, None, None
-
-
 def fetch_classifica(slug, competition_id):
     session = get_fanta_session()
     if not session:
@@ -151,52 +184,15 @@ def fetch_classifica(slug, competition_id):
         return "⚠️ Errore durante la lettura della classifica."
 
 
-def parse_calendario_excel(filepath):
-    if not os.path.exists(filepath):
-        return {}
-    try:
-        df = pd.read_excel(filepath, sheet_name=0, header=None)
-        calendar = {}
-        for r in range(len(df)):
-            for col in [0, 6]:
-                val = str(df.iloc[r, col])
-                if "Giornata lega" in val:
-                    g_num = int(val.strip().split('ª')[0])
-                    serie_a = str(df.iloc[r, col + 2]).strip()
-                    matches = []
-                    for m in range(1, 5):
-                        if r + m < len(df):
-                            home = str(df.iloc[r + m, col]).strip()
-                            p_home = df.iloc[r + m, col + 1]
-                            p_away = df.iloc[r + m, col + 2]
-                            away = str(df.iloc[r + m, col + 3]).strip()
-                            score = str(df.iloc[r + m, col + 4]).strip()
-                            if home and away and home != 'nan' and away != 'nan':
-                                matches.append({
-                                    "home": home,
-                                    "away": away,
-                                    "p_home": p_home,
-                                    "p_away": p_away,
-                                    "score": score
-                                })
-                    calendar[g_num] = {"nome": val.strip(), "serie_a": serie_a, "matches": matches}
-        return calendar
-    except Exception as e:
-        logger.error(f"Errore lettura Excel {filepath}: {e}")
-        return {}
-
-
-def get_incontri_testo(filepath, target_round=None):
-    calendario = parse_calendario_excel(filepath)
+def get_incontri_testo(calendario, target_round=None):
     if not calendario:
-        return "⚠️ File calendario non trovato sul server."
+        return "⚠️ Calendario non disponibile (verifica che i file excel siano presenti nel repository)."
 
     if target_round is None:
         target_round = 1
         for g_num in sorted(calendario.keys()):
             matches = calendario[g_num]["matches"]
-            da_giocare = any(m["score"] in ["-", "nan", ""] for m in matches)
-            if da_giocare:
+            if any(m.get("score") in ["-", "nan", ""] for m in matches):
                 target_round = g_num
                 break
 
@@ -210,8 +206,8 @@ def get_incontri_testo(filepath, target_round=None):
         a_owner = OWNER_LOOKUP.get(m['away'].lower(), "")
         h_str = f"{m['home']} <i>({h_owner})</i>" if h_owner else m['home']
         a_str = f"{m['away']} <i>({a_owner})</i>" if a_owner else m['away']
-        
-        if m['score'] not in ["-", "nan", ""]:
+
+        if m.get("score") and m["score"] not in ["-", "nan", ""]:
             testo += f"⚔️ <b>{h_str}</b> {m['p_home']} [{m['score']}] {m['p_away']} <b>{a_str}</b>\n"
         else:
             testo += f"⚔️ <b>{h_str}</b> vs <b>{a_str}</b>\n"
@@ -228,17 +224,17 @@ def genera_recap_ai(dati_classifica, nome_lega):
     {dati_classifica}
 
     LINEE GUIDA:
-    1. Prendi di mira direttamente i proprietari (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, ecc.).
-    2. Usa il formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. NON USARE DOPPI ASTERISCHI.
+    1. Prendi di mira direttamente i proprietari (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto, ecc.).
+    2. Usa il formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. NON USARE MAI DOPPI ASTERISCHI (**).
     3. Segui la struttura:
        - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
-       - Frase d'apertura dissacrante sul livello del weekend.
-       - ⚽️ <b>SCONTRI E DISASTRI:</b> Commenta le partite più calde.
+       - Frase d'apertura dissacrante sul livello del weekend calcistico.
+       - ⚽️ <b>SCONTRI E DISASTRI:</b> Commenta le situazioni salienti.
        - 🍀 <b>LO SCULATO DELLA SETTIMANA:</b> Prendi per il culo chi vince con fortuna.
-       - 💩 <b>IL BIDONE D'ORO:</b> Umilia l'ultimo in classifica.
+       - 💩 <b>IL BIDONE D'ORO:</b> Umilia chi è all'ultimo posto.
        - 🤡 Chiusura con insulto corale.
 
-    Massimo 300 parole, stile brillante e compatto.
+    Massimo 300 parole, stile brillante e ordinato.
     """
     try:
         res = model.generate_content(prompt)
@@ -246,28 +242,27 @@ def genera_recap_ai(dati_classifica, nome_lega):
         return testo
     except Exception as e:
         logger.error(f"Errore Gemini: {e}")
-        return "⚠️ Errore generazione recap."
+        return "⚠️ Errore durante la generazione del recap."
 
 
 def genera_alert_infortunio_ai(calciatore, squadra, proprietario, notizia_testo):
-    """Genera una presa in giro satirica specifica per l'infortunio di un calciatore."""
     model = genai.GenerativeModel("gemini-3.1-flash-lite")
     prompt = f"""
     Sei un bot di Fantacalcio caustico e perfido. 
     È appena arrivata questa brutta notizia di infortunio/mercato:
     "{notizia_testo}"
     
-    Il calciatore infortunato è: {calciatore}.
+    Il calciatore in questione è: {calciatore}.
     La squadra che lo possiede è: {squadra}, presieduta da: {proprietario}.
     
-    Scrivi un messaggio satirico, cattivo ed esilarante indirizzato direttamente a {proprietario} per prenderlo in giro sul fatto che il suo top player è andato k.o.
-    Usa formato HTML di Telegram (<b>grassetto</b>). Massimo 70 parole.
+    Scrivi un messaggio satirico, cattivo ed esilarante indirizzato direttamente a {proprietario} per prenderlo in giro sul fatto che il suo calciatore è k.o. o in partenza.
+    Usa formato HTML di Telegram (<b>grassetto</b>). Massimo 60 parole.
     """
     try:
         res = model.generate_content(prompt)
         return res.text.replace("**", "<b>")
     except Exception:
-        return f"🚨 <b>BOLLETTINO MEDICO</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): si è fatto male <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
+        return f"🚨 <b>ALLERTA CALCIATORE!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
 
 
 def get_lega_autorizzata(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -314,23 +309,18 @@ async def cmd_incontri(update: Update, context: ContextTypes.DEFAULT_TYPE):
             elif len(context.args) == 1 and arg.isdigit() and update.effective_chat.type != "private":
                 target_giornata = int(arg)
 
-    msg = get_incontri_testo(lega["excel_calendario"], target_giornata)
+    msg = get_incontri_testo(lega["calendario"], target_giornata)
     await update.message.reply_text(msg, parse_mode="HTML")
 
 
 async def cmd_rosa(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Mostra la rosa di una determinata squadra."""
     lega = get_lega_autorizzata(update, context)
     if not lega:
         if update.effective_chat.type == "private":
             await update.message.reply_text("Usa: /rosa 1 [NomeSquadra] oppure /rosa 2 [NomeSquadra]")
         return
 
-    rose = parse_rosters_file(lega["excel_rose"])
-    if not rose:
-        await update.message.reply_text("⚠️ File rose non trovato sul server.")
-        return
-
+    rose = lega["rose"]
     squadra_cercata = " ".join([a for a in context.args if a not in ["1", "2"]]).strip().lower()
     if not squadra_cercata:
         elenco = "\n".join([f"• <b>{t}</b> <i>({OWNER_LOOKUP.get(t.lower(), '')})</i>" for t in rose.keys()])
@@ -367,7 +357,6 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def check_infortuni_e_news(app):
-    """Monitora il feed notizie di Fantacalcio e manda alert al gruppo specifico."""
     feed_url = "https://www.fantacalcio.it/rss/notizie"
     try:
         feed = feedparser.parse(feed_url)
@@ -385,7 +374,7 @@ async def check_infortuni_e_news(app):
                 for chat_id, lega in LEGHE.items():
                     if chat_id == 0:
                         continue
-                    rose = parse_rosters_file(lega["excel_rose"])
+                    rose = lega["rose"]
                     for team_name, players in rose.items():
                         for p in players:
                             if p.lower() in testo_news.lower() and len(p) > 3:
@@ -406,10 +395,8 @@ async def background_checker(app):
     await asyncio.sleep(15)
     while True:
         try:
-            # 1. Controllo Infortuni e Notizie
             await check_infortuni_e_news(app)
 
-            # 2. Controllo Calcolo Nuova Giornata
             session = get_fanta_session()
             if session:
                 for chat_id, config in LEGHE.items():
@@ -431,7 +418,7 @@ async def background_checker(app):
                         elif config["ultima_giornata"] == 0:
                             config["ultima_giornata"] = num_giocate
         except Exception as e:
-            logger.error(f"Errore nel background worker: {e}")
+            logger.error(f"Errore background worker: {e}")
         await asyncio.sleep(1200)
 
 
@@ -450,7 +437,7 @@ def main():
     app.add_handler(CommandHandler("rosa", cmd_rosa))
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
 
-    logger.info("Bot Fantacalcio avviato con supporto Rose, Calendario e Alert Infortuni.")
+    logger.info("Bot Fantacalcio avviato con supporto Calendario Excel e percorsi assoluti.")
     app.run_polling()
 
 
