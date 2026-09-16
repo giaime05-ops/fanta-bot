@@ -40,18 +40,20 @@ LEGHE = {
     }
 }
 
-# Endpoint ufficiale API Fantacalcio verificato
+# Endpoint ufficiale API Fantacalcio
 LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
+FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 
 
 def get_fanta_session():
-    """Effettua il login su Fantacalcio.it tramite la nuova API e restituisce una sessione autenticata."""
+    """Effettua il login su Fantacalcio.it con Bearer Token e App Key."""
     session = requests.Session()
     session.headers.update({
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Referer": "https://leghe.fantacalcio.it/",
         "Origin": "https://leghe.fantacalcio.it",
         "Content-Type": "application/json",
+        "app_key": FANTA_APP_KEY,
     })
 
     payload = {
@@ -63,7 +65,7 @@ def get_fanta_session():
         res = session.post(LOGIN_URL, json=payload, timeout=10)
         if res.status_code == 200:
             data = res.json()
-            # Estrazione token JWT dalla risposta JSON
+            # Estrazione del token JWT
             token = (
                 data.get("token") 
                 or data.get("access_token") 
@@ -74,7 +76,7 @@ def get_fanta_session():
                 session.headers["Authorization"] = f"Bearer {token}"
                 logger.info("Login effettuato con successo e Bearer Token acquisito!")
             else:
-                logger.info("Login effettuato con successo tramite cookie di sessione.")
+                logger.info("Login effettuato con successo tramite sessione.")
             return session
         else:
             logger.error(f"Login non riuscito: status {res.status_code} - {res.text}")
