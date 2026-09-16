@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 FANTA_EMAIL = os.getenv("FANTA_EMAIL")
 FANTA_PASSWORD = os.getenv("FANTA_PASSWORD")
 FANTA_COOKIE = os.getenv("FANTA_COOKIE", "")
+FANTA_BEARER_TOKEN = os.getenv("FANTA_BEARER_TOKEN", "")
 TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 ADMIN_TELEGRAM_ID = int(os.getenv("ADMIN_TELEGRAM_ID", "6226253008"))
@@ -65,7 +66,7 @@ ROSE_LEGA_2 = {
     "DEMOCRAZIA CRISTANTE": ['Butez', 'Gollini', 'Sanchez Ro.', 'Wesley', 'Akanji', 'Di Lorenzo', 'Tavares N.', 'Kaiki', 'Bartesaghi', 'Miranda J.', 'Diego Carlos', 'Paz N.', 'Diouf', 'Moreira', 'Liberali', 'Cambiaghi', 'Colpani', 'Zalewski', 'Cristante', 'Dybala', 'Scamacca', 'Krstovic', 'Pellegrino M.', 'Diao', 'Soulè'],
     "Scrotone": ['Provedel', 'De Gea', 'Mandas', 'Dimarco', 'Gila', 'Valle', 'Vasquez', 'Pavard', 'Zappacosta', 'Delprato', 'Carlos Augusto', 'De Bruyne', 'Vlasic', 'Goncalves P.', 'Zielinski', 'Rowe', 'Samardzic', 'Konè M.', 'Cacciamani', 'Douvikas', 'Davis K.', 'Berardi', 'Boga', 'Santos A.', 'Colombo'],
     "HINTER X HINTER": ['Meret', 'Perri', 'Milinkovic-Savic V.', 'Rrahmani', 'Mancini', 'Pavlovic', 'Chalobah T.', 'Kempf', 'Tiago Gabriel', 'Kristensen T.', 'Spinazzola', 'Pulisic', 'Atta', 'Ederson D.S.', 'Adzic', 'Pisilli', 'Fazzini', 'Casadei', 'Sarr P.', 'Martinez L.', 'Laurientè', 'Yeboah J.', 'Neres', 'Tourè E.', 'Kvernadze'],
-    "FC Pinolandia": ['Carnesecchi', 'Okoye', 'Sportiello', 'Kalulu', "N'Dicka", 'Vojvoda', 'Lulli', 'Kamara H.', 'Scalvini', 'Ismajli', 'Balerdi', 'Mastantuono', 'Frattesi', 'Zaniolo', 'McKennie', 'Kessiè', 'Romano', 'Unai Gomez', 'Pellegrino Lo.', 'Kolo Muani', 'Woltemade', 'Castro S.', 'Esposito Se.', 'Raspadori', 'Bowie'],
+    "FC Pinolandia": ['Carnesecchi', 'Okoye', 'Sportiello', 'Kalulu', "N'Dicka", 'Vojvoda', 'Lulli', 'Kamara H.', 'Scalvini', 'Ismajli', 'Balerdi', 'Mastantuono', 'Frattesi', 'Zaniolo', 'McKennie', 'Kessiè', 'Romano', 'Unai Gomez', 'Pellegrini Lo.', 'Kolo Muani', 'Woltemade', 'Castro S.', 'Esposito Se.', 'Raspadori', 'Bowie'],
     "FREE SAPOMODORO FC": ['Svilar', 'Corvi', 'Falcone', 'Bremer', 'Stones', 'Mina', 'Bracaglia', 'Valeri', 'Pedraza', 'Jimenez A.', 'Monterisi', 'Rabiot', 'Orsolini', 'Zaccagni', 'Cissè A.', 'Gonzalez N.', 'Taylor K.', 'Vergara', 'Modric', 'Malen', 'Raimondo', 'Romero D.', 'De Ketelaere', 'Kevin Carlos', 'Dovbyk'],
     "COSTIERA ANALFITANA": ['Vicario', 'Caprile', 'Grabara', 'Bastoni', 'Ramon', 'Valdepenas', 'Celik', 'Marcandalli', 'Comuzzo', 'Obert', 'Cambiaso', 'Calhanoglu', 'Da Cunha', 'Gudmundsson A.', 'Volpato', 'Jones C.', 'Gaetano', 'Bernabè', 'Baldanzi', 'Hojlund', 'Esposito F.P.', 'Yildiz', 'Lucca', 'Maldini', 'Adams C.']
 }
@@ -82,7 +83,7 @@ CALENDARIO_LEGA_1 = {
     9: {"nome": "9ª Giornata lega", "serie_a": 11, "matches": [{"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Luton Down", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "BENE EH MANCO MALEN", "score": "-"}]},
     10: {"nome": "10ª Giornata lega", "serie_a": 12, "matches": [{"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
     11: {"nome": "11ª Giornata lega", "serie_a": 13, "matches": [{"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "Luton Down", "score": "-"}]},
-    12: {"nome": "12ª Giornata lega", "serie_a": 14, "matches": [{"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    12: {"nome": "12ª Giornata lega", "serie_a": 14, "matches": [{"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Al-Qaeda United", "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
     13: {"nome": "13ª Giornata lega", "serie_a": 15, "matches": [{"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "Al-Qaeda United", "score": "-"}]},
     14: {"nome": "14ª Giornata lega", "serie_a": 16, "matches": [{"home": "Al-Qaeda United", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}]},
     15: {"nome": "15ª Giornata lega", "serie_a": 17, "matches": [{"home": "Deportivo Sa Carogna", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "CHIVUISMO", "away": "NicoPanz", "score": "-"}]},
@@ -185,19 +186,27 @@ def get_fanta_session():
     if clean_cookie:
         headers["Cookie"] = clean_cookie
 
+    bearer = FANTA_BEARER_TOKEN.strip()
+    if bearer:
+        if not bearer.lower().startswith("bearer "):
+            bearer = f"Bearer {bearer}"
+        headers["Authorization"] = bearer
+
     session.headers.update(headers)
-    payload = {"username": FANTA_EMAIL, "password": FANTA_PASSWORD}
-    try:
-        res = session.post(LOGIN_URL, json=payload, timeout=10)
-        if res.status_code == 200:
-            data = res.json()
-            token = data.get("token") or data.get("access_token")
-            if token:
-                session.headers["Authorization"] = f"Bearer {token}"
-            return session
-    except Exception as e:
-        logger.error(f"Errore login: {e}")
-    return session if clean_cookie else None
+
+    if not bearer and FANTA_EMAIL and FANTA_PASSWORD:
+        payload = {"username": FANTA_EMAIL, "password": FANTA_PASSWORD}
+        try:
+            res = session.post(LOGIN_URL, json=payload, timeout=10)
+            if res.status_code == 200:
+                data = res.json()
+                token = data.get("token") or data.get("access_token")
+                if token:
+                    session.headers["Authorization"] = f"Bearer {token}"
+        except Exception as e:
+            logger.error(f"Errore login: {e}")
+
+    return session
 
 
 def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_away):
@@ -250,7 +259,6 @@ def fetch_tabellini_analizzati(lega, round_num):
             report += f"  <i>⚠️ {err_msg}</i>\n"
             continue
 
-        # Elaborazione struttura formazioni
         payload = data.get("data", data)
         home_team_data = payload.get("home") or payload.get("teamHome") or payload.get("squadraCasa") or {}
         away_team_data = payload.get("away") or payload.get("teamAway") or payload.get("squadraTrasferta") or {}
@@ -585,7 +593,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio avviato con diagnosi teamLineup.")
+    logger.info("Bot pronto con Bearer Token autenticato.")
     app.run_polling()
 
 
