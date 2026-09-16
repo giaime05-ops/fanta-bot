@@ -171,6 +171,7 @@ LEGHE = {
 LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
+PLAYERS_CACHE = {}
 
 
 def get_fanta_session():
@@ -209,19 +210,54 @@ def get_fanta_session():
     return session
 
 
+def get_players_map():
+    global PLAYERS_CACHE
+    if PLAYERS_CACHE:
+        return PLAYERS_CACHE
+
+    session = get_fanta_session()
+    if not session:
+        return {}
+
+    url = "https://apileague.fantacalcio.it/onboarding/v1/league/players"
+    try:
+        r = session.get(url, timeout=10)
+        if r.status_code == 200:
+            data = r.json()
+            players_list = data.get("data", data)
+            if isinstance(players_list, list):
+                for p in players_list:
+                    pid = p.get("id") or p.get("p_id") or p.get("pid")
+                    name = p.get("name") or p.get("n") or p.get("playerName") or p.get("cognome")
+                    if pid and name:
+                        PLAYERS_CACHE[int(pid)] = name
+            elif isinstance(players_list, dict):
+                for k, v in players_list.items():
+                    if isinstance(v, dict):
+                        p_name = v.get("name") or v.get("n") or v.get("playerName")
+                        if p_name:
+                            PLAYERS_CACHE[int(k)] = p_name
+                    elif isinstance(v, str):
+                        PLAYERS_CACHE[int(k)] = v
+    except Exception as e:
+        logger.error(f"Errore recupero players map: {e}")
+
+    return PLAYERS_CACHE
+
+
 def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_away):
     session = get_fanta_session()
     if not session:
-        return {"error": "Cookie o sessione mancante"}
+        return None
 
     url = f"https://apileague.fantacalcio.it/gaming/v1/teamLineup/{competition_id}/{round_num}/{serie_a_round}/{id_home}/{id_away}"
     try:
         r = session.get(url, timeout=10)
         if r.status_code == 200:
             return r.json()
-        return {"error": f"HTTP {r.status_code}: {r.text[:120]}"}
     except Exception as e:
-        return {"error": f"Errore rete: {e}"}
+        logger.error(f"Errore match lineup: {e}")
+    return None
 
 
 def fetch_tabellini_analizzati(lega, round_num):
@@ -233,19 +269,77 @@ def fetch_tabellini_analizzati(lega, round_num):
 
     serie_a_round = giornata_info.get("serie_a", round_num + 2)
     matches = giornata_info.get("matches", [])
+    players_map = get_players_map()
 
-    # Ispezioniamo la prima partita per vedere le chiavi del JSON
-    m = matches[0]
-    id_h = NAME_TO_ID.get(m["home"].lower())
-    id_a = NAME_TO_ID.get(m["away"].lower())
-    data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
+    report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
 
-    if not data or "error" in data:
-        err = data.get("error") if isinstance(data, dict) else "Dati vuoti"
-        return f"Errore chiamata: {err}"
+    for m in matches:
+        h_name = m["home"]
+        a_name = m["away"]
+        id_h = NAME_TO_ID.get(h_name.lower())
+        id_a = NAME_TO_ID.get(a_name.lower())
+        h_owner = OWNER_LOOKUP.get(h_name.lower(), "")
+        a_owner = OWNER_LOOKUP.get(a_name.lower(), "")
 
-    raw_str = json.dumps(data, ensure_ascii=False, indent=2)
-    return f"✅ <b>JSON RICEVUTO ({m['home']} vs {m['away']}):</b>\n<code>{raw_str[:3500]}</code>"
+        if not id_h or not id_a:
+            continue
+
+        data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
+        score_text = m.get("score", "-")
+        p_h = m.get("p_home", "")
+        p_a = m.get("p_away", "")
+
+        report += f"\n⚔️ <b>{h_name}</b> ({h_owner}) <b>{p_h} [{score_text}] {p_a}</b> <b>{a_name}</b> ({a_owner})\n"
+
+        if not data:
+            continue
+
+        home_obj = data.get("home", {})
+        away_obj = data.get("away", {})
+
+        for team_label, team_obj, t_owner in [(h_name, home_obj, h_owner), (a_name, away_obj, a_owner)]:
+            if not isinstance(team_obj, dict):
+                continue
+
+            starts = team_obj.get("starts", [])
+            bench = team_obj.get("bench", [])
+
+            titolari_top = []
+            titolari_flop = []
+            panchina_rimpianti = []
+
+            for p in starts:
+                pid = p.get("pid")
+                p_name = players_map.get(pid, f"Giocatore {pid}")
+                voto = float(p.get("scr", 0))
+                fvoto = float(p.get("cscr", 0))
+
+                # Voti reali calcolati: 55 e 56 sono codici interni di Fantacalcio per 'senza voto'
+                if fvoto >= 9.5 and fvoto < 50:
+                    titolari_top.append(f"{p_name} ⚽ (FV {fvoto})")
+                elif voto <= 4.5 and voto > 0:
+                    titolari_flop.append(f"{p_name} 💩 (voto {voto})")
+
+            for p in bench:
+                pid = p.get("pid")
+                p_name = players_map.get(pid, f"Giocatore {pid}")
+                voto = float(p.get("scr", 0))
+                fvoto = float(p.get("cscr", 0))
+
+                if fvoto >= 9.5 and fvoto < 50:
+                    titolari_top_bonus = f"GOL DI {p_name.upper()} (FV {fvoto})"
+                    panchina_rimpianti.append(titolari_top_bonus)
+                elif voto >= 7.0 and voto < 50:
+                    panchina_rimpianti.append(f"{p_name} (voto {voto})")
+
+            if titolari_top:
+                report += f"  • {team_label} - Protagonisti: {', '.join(titolari_top)}\n"
+            if titolari_flop:
+                report += f"  • {team_label} - Disastri: {', '.join(titolari_flop)}\n"
+            if panchina_rimpianti:
+                report += f"  ⚠️ <b>PANCHINA {t_owner.upper()}:</b> {', '.join(panchina_rimpianti)} lasciati fuori!\n"
+
+    return report
 
 
 def fetch_classifica(slug, competition_id):
@@ -314,10 +408,23 @@ def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
     Classifica attuale:
     {dati_classifica}
 
-    DATI UFFICIALI PARTITE:
+    DATI UFFICIALI PARTITE, MARCATORI E PANCHINE:
     {dati_tabellino}
 
-    Massimo 280 parole. Usa tag HTML di Telegram (<b>, <i>).
+    LINEE GUIDA RIGIDE:
+    1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
+    2. SE QUALCUNO HA LASCIATO GOL O BONUS IN PANCHINA, MASSACRALO SENZA PIETÀ! Fagli notare quanto è incompetente.
+    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
+    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
+    5. Struttura del messaggio:
+       - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
+       - Frase d'apertura tagliente.
+       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde citando chi ha segnato e chi ha sbagliato la formazione.
+       - 🍀 <b>LO SCULATO:</b> Chi vince col minimo sforzo.
+       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via punti lasciando gol in panca o chi è ultimo.
+       - 🤡 Chiusura con insulto corale.
+
+    Massimo 280 parole.
     """
     try:
         res = model.generate_content(prompt)
@@ -422,7 +529,7 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Recupero JSON per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico formazioni, voti e panchine per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
 
@@ -436,7 +543,7 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Specifica la lega: /test_recap 1 o /test_recap 2")
         return
 
-    await update.message.reply_text(f"⏳ Generazione recap per <b>{lega['nome']}</b>...", parse_mode="HTML")
+    await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
     dati_tabellino = fetch_tabellini_analizzati(lega, 2)
     recap = genera_recap_ai(classifica_testo, dati_tabellino, lega["nome"])
@@ -529,7 +636,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot pronto per ispezione chiavi JSON.")
+    logger.info("Bot Fantacalcio attivo con calcolo tabellini completato.")
     app.run_polling()
 
 
