@@ -45,6 +45,7 @@ TEAMS_MAP = {
     19197286: {"name": "FC Pinolandia", "owner": "Ernesto Tavaroni"}
 }
 
+NAME_TO_ID = {v["name"].strip().lower(): k for k, v in TEAMS_MAP.items()}
 OWNER_LOOKUP = {v["name"].strip().lower(): v["owner"] for v in TEAMS_MAP.values()}
 
 ROSE_LEGA_1 = {
@@ -70,81 +71,81 @@ ROSE_LEGA_2 = {
 }
 
 CALENDARIO_LEGA_1 = {
-    1: {"nome": "1ª Giornata lega", "serie_a": "3ª Giornata serie a", "matches": [{"home": "Al-Qaeda United", "away": "RSA riabilitazione", "p_home": 70.0, "p_away": 64.0, "score": "1-0"}, {"home": "Deportivo Sa Carogna", "away": "Luton Down", "p_home": 75.5, "p_away": 70.5, "score": "2-1"}, {"home": "BENE EH MANCO MALEN", "away": "UwU", "p_home": 74.5, "p_away": 79.0, "score": "2-3"}, {"home": "CHIVUISMO", "away": "NicoPanz", "p_home": 78.5, "p_away": 84.5, "score": "3-4"}]},
-    2: {"nome": "2ª Giornata lega", "serie_a": "4ª Giornata serie a", "matches": [{"home": "RSA riabilitazione", "away": "CHIVUISMO", "p_home": 67.0, "p_away": 77.0, "score": "1-2"}, {"home": "NicoPanz", "away": "BENE EH MANCO MALEN", "p_home": 68.0, "p_away": 67.5, "score": "1-1"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "p_home": 80.5, "p_away": 73.0, "score": "3-2"}, {"home": "Luton Down", "away": "Al-Qaeda United", "p_home": 75.5, "p_away": 76.0, "score": "2-2"}]},
-    3: {"nome": "3ª Giornata lega", "serie_a": "5ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "NicoPanz", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "CHIVUISMO", "away": "Al-Qaeda United", "score": "-"}, {"home": "UwU", "away": "Luton Down", "score": "-"}]},
-    4: {"nome": "4ª Giornata lega", "serie_a": "6ª Giornata serie a", "matches": [{"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "RSA riabilitazione", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "NicoPanz", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "CHIVUISMO", "score": "-"}]},
-    5: {"nome": "5ª Giornata lega", "serie_a": "7ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "CHIVUISMO", "score": "-"}, {"home": "NicoPanz", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}]},
-    6: {"nome": "6ª Giornata lega", "serie_a": "8ª Giornata serie a", "matches": [{"home": "Al-Qaeda United", "away": "UwU", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "CHIVUISMO", "away": "Deportivo Sa Carogna", "score": "-"}]},
-    7: {"nome": "7ª Giornata lega", "serie_a": "9ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "Al-Qaeda United", "score": "-"}, {"home": "UwU", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}]},
-    8: {"nome": "8ª Giornata lega", "serie_a": "10ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "Al-Qaeda United", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "CHIVUISMO", "away": "RSA riabilitazione", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}]},
-    9: {"nome": "9ª Giornata lega", "serie_a": "11ª Giornata serie a", "matches": [{"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Luton Down", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "BENE EH MANCO MALEN", "score": "-"}]},
-    10: {"nome": "10ª Giornata lega", "serie_a": "12ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
-    11: {"nome": "11ª Giornata lega", "serie_a": "13ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "Luton Down", "score": "-"}]},
-    12: {"nome": "12ª Giornata lega", "serie_a": "14ª Giornata serie a", "matches": [{"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
-    13: {"nome": "13ª Giornata lega", "serie_a": "15ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "Al-Qaeda United", "score": "-"}]},
-    14: {"nome": "14ª Giornata lega", "serie_a": "16ª Giornata serie a", "matches": [{"home": "Al-Qaeda United", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}]},
-    15: {"nome": "15ª Giornata lega", "serie_a": "17ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "CHIVUISMO", "away": "NicoPanz", "score": "-"}]},
-    16: {"nome": "16ª Giornata lega", "serie_a": "18ª Giornata serie a", "matches": [{"home": "Luton Down", "away": "CHIVUISMO", "score": "-"}, {"home": "NicoPanz", "away": "Al-Qaeda United", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "UwU", "score": "-"}, {"home": "RSA riabilitazione", "away": "Deportivo Sa Carogna", "score": "-"}]},
-    17: {"nome": "17ª Giornata lega", "serie_a": "19ª Giornata serie a", "matches": [{"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Al-Qaeda United", "away": "Luton Down", "score": "-"}, {"home": "CHIVUISMO", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}]},
-    18: {"nome": "18ª Giornata lega", "serie_a": "20ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "RSA riabilitazione", "away": "CHIVUISMO", "score": "-"}]},
-    19: {"nome": "19ª Giornata lega", "serie_a": "21ª Giornata serie a", "matches": [{"home": "UwU", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}, {"home": "NicoPanz", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}]},
-    20: {"nome": "20ª Giornata lega", "serie_a": "22ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Luton Down", "away": "NicoPanz", "score": "-"}, {"home": "Al-Qaeda United", "away": "RSA riabilitazione", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}]},
-    21: {"nome": "21ª Giornata lega", "serie_a": "23ª Giornata serie a", "matches": [{"home": "UwU", "away": "Al-Qaeda United", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "CHIVUISMO", "score": "-"}, {"home": "RSA riabilitazione", "away": "Luton Down", "score": "-"}]},
-    22: {"nome": "22ª Giornata lega", "serie_a": "24ª Giornata serie a", "matches": [{"home": "Al-Qaeda United", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "NicoPanz", "away": "UwU", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}]},
-    23: {"nome": "23ª Giornata lega", "serie_a": "25ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}, {"home": "UwU", "away": "CHIVUISMO", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Al-Qaeda United", "score": "-"}]},
-    24: {"nome": "24ª Giornata lega", "serie_a": "26ª Giornata serie a", "matches": [{"home": "Al-Qaeda United", "away": "UwU", "score": "-"}, {"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
-    25: {"nome": "25ª Giornata lega", "serie_a": "27ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "Al-Qaeda United", "score": "-"}, {"home": "UwU", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "Luton Down", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}]},
-    26: {"nome": "26ª Giornata lega", "serie_a": "28ª Giornata serie a", "matches": [{"home": "Luton Down", "away": "Al-Qaeda United", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}]},
-    27: {"nome": "27ª Giornata lega", "serie_a": "29ª Giornata serie a", "matches": [{"home": "UwU", "away": "Luton Down", "score": "-"}, {"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}]},
-    28: {"nome": "28ª Giornata lega", "serie_a": "30ª Giornata serie a", "matches": [{"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
-    29: {"nome": "29ª Giornata lega", "serie_a": "31ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}]},
-    30: {"nome": "30ª Giornata lega", "serie_a": "32ª Giornata serie a", "matches": [{"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}]},
-    31: {"nome": "31ª Giornata lega", "serie_a": "33ª Giornata serie a", "matches": [{"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "score": "-"}]},
-    32: {"nome": "32ª Giornata lega", "serie_a": "34ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}]},
-    33: {"nome": "33ª Giornata lega", "serie_a": "35ª Giornata serie a", "matches": [{"home": "NicoPanz", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Luton Down", "away": "Al-Qaeda United", "score": "-"}, {"home": "CHIVUISMO", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}]},
-    34: {"nome": "34ª Giornata lega", "serie_a": "36ª Giornata serie a", "matches": [{"home": "BENE EH MANCO MALEN", "away": "UwU", "score": "-"}, {"home": "RSA riabilitazione", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}]},
-    35: {"nome": "35ª Giornata lega", "serie_a": "37ª Giornata serie a", "matches": [{"home": "NicoPanz", "away": "Luton Down", "score": "-"}, {"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "UwU", "away": "Al-Qaeda United", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}]},
-    36: {"nome": "36ª Giornata lega", "serie_a": "38ª Giornata serie a", "matches": [{"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "CHIVUISMO", "away": "NicoPanz", "score": "-"}, {"home": "Al-Qaeda United", "away": "RSA riabilitazione", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}]}
+    1: {"nome": "1ª Giornata lega", "serie_a": 3, "matches": [{"home": "Al-Qaeda United", "away": "RSA riabilitazione", "p_home": 70.0, "p_away": 64.0, "score": "1-0"}, {"home": "Deportivo Sa Carogna", "away": "Luton Down", "p_home": 75.5, "p_away": 70.5, "score": "2-1"}, {"home": "BENE EH MANCO MALEN", "away": "UwU", "p_home": 74.5, "p_away": 79.0, "score": "2-3"}, {"home": "CHIVUISMO", "away": "NicoPanz", "p_home": 78.5, "p_away": 84.5, "score": "3-4"}]},
+    2: {"nome": "2ª Giornata lega", "serie_a": 4, "matches": [{"home": "RSA riabilitazione", "away": "CHIVUISMO", "p_home": 67.0, "p_away": 77.0, "score": "1-2"}, {"home": "NicoPanz", "away": "BENE EH MANCO MALEN", "p_home": 68.0, "p_away": 67.5, "score": "1-1"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "p_home": 80.5, "p_away": 73.0, "score": "3-2"}, {"home": "Luton Down", "away": "Al-Qaeda United", "p_home": 75.5, "p_away": 76.0, "score": "2-2"}]},
+    3: {"nome": "3ª Giornata lega", "serie_a": 5, "matches": [{"home": "Deportivo Sa Carogna", "away": "NicoPanz", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "CHIVUISMO", "away": "Al-Qaeda United", "score": "-"}, {"home": "UwU", "away": "Luton Down", "score": "-"}]},
+    4: {"nome": "4ª Giornata lega", "serie_a": 6, "matches": [{"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "RSA riabilitazione", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "NicoPanz", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "CHIVUISMO", "score": "-"}]},
+    5: {"nome": "5ª Giornata lega", "serie_a": 7, "matches": [{"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "CHIVUISMO", "score": "-"}, {"home": "NicoPanz", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}]},
+    6: {"nome": "6ª Giornata lega", "serie_a": 8, "matches": [{"home": "Al-Qaeda United", "away": "UwU", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "CHIVUISMO", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    7: {"nome": "7ª Giornata lega", "serie_a": 9, "matches": [{"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "Al-Qaeda United", "score": "-"}, {"home": "UwU", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}]},
+    8: {"nome": "8ª Giornata lega", "serie_a": 10, "matches": [{"home": "BENE EH MANCO MALEN", "away": "Al-Qaeda United", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "CHIVUISMO", "away": "RSA riabilitazione", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}]},
+    9: {"nome": "9ª Giornata lega", "serie_a": 11, "matches": [{"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Luton Down", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "BENE EH MANCO MALEN", "score": "-"}]},
+    10: {"nome": "10ª Giornata lega", "serie_a": 12, "matches": [{"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
+    11: {"nome": "11ª Giornata lega", "serie_a": 13, "matches": [{"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "Luton Down", "score": "-"}]},
+    12: {"nome": "12ª Giornata lega", "serie_a": 14, "matches": [{"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    13: {"nome": "13ª Giornata lega", "serie_a": 15, "matches": [{"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "Al-Qaeda United", "score": "-"}]},
+    14: {"nome": "14ª Giornata lega", "serie_a": 16, "matches": [{"home": "Al-Qaeda United", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}]},
+    15: {"nome": "15ª Giornata lega", "serie_a": 17, "matches": [{"home": "Deportivo Sa Carogna", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "CHIVUISMO", "away": "NicoPanz", "score": "-"}]},
+    16: {"nome": "16ª Giornata lega", "serie_a": 18, "matches": [{"home": "Luton Down", "away": "CHIVUISMO", "score": "-"}, {"home": "NicoPanz", "away": "Al-Qaeda United", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "UwU", "score": "-"}, {"home": "RSA riabilitazione", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    17: {"nome": "17ª Giornata lega", "serie_a": 19, "matches": [{"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Al-Qaeda United", "away": "Luton Down", "score": "-"}, {"home": "CHIVUISMO", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}]},
+    18: {"nome": "18ª Giornata lega", "serie_a": 20, "matches": [{"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}, {"home": "NicoPanz", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "RSA riabilitazione", "away": "CHIVUISMO", "score": "-"}]},
+    19: {"nome": "19ª Giornata lega", "serie_a": 21, "matches": [{"home": "UwU", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}, {"home": "NicoPanz", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}]},
+    20: {"nome": "20ª Giornata lega", "serie_a": 22, "matches": [{"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Luton Down", "away": "NicoPanz", "score": "-"}, {"home": "Al-Qaeda United", "away": "RSA riabilitazione", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}]},
+    21: {"nome": "21ª Giornata lega", "serie_a": 23, "matches": [{"home": "UwU", "away": "Al-Qaeda United", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "CHIVUISMO", "score": "-"}, {"home": "RSA riabilitazione", "away": "Luton Down", "score": "-"}]},
+    22: {"nome": "22ª Giornata lega", "serie_a": 24, "matches": [{"home": "Al-Qaeda United", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "NicoPanz", "away": "UwU", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "RSA riabilitazione", "away": "BENE EH MANCO MALEN", "score": "-"}]},
+    23: {"nome": "23ª Giornata lega", "serie_a": 25, "matches": [{"home": "Deportivo Sa Carogna", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}, {"home": "UwU", "away": "CHIVUISMO", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Al-Qaeda United", "score": "-"}]},
+    24: {"nome": "24ª Giornata lega", "serie_a": 26, "matches": [{"home": "Al-Qaeda United", "away": "UwU", "score": "-"}, {"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    25: {"nome": "25ª Giornata lega", "serie_a": 27, "matches": [{"home": "CHIVUISMO", "away": "Al-Qaeda United", "score": "-"}, {"home": "UwU", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "Luton Down", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}]},
+    26: {"nome": "26ª Giornata lega", "serie_a": 28, "matches": [{"home": "Luton Down", "away": "Al-Qaeda United", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "CHIVUISMO", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "NicoPanz", "score": "-"}, {"home": "RSA riabilitazione", "away": "UwU", "score": "-"}]},
+    27: {"nome": "27ª Giornata lega", "serie_a": 29, "matches": [{"home": "UwU", "away": "Luton Down", "score": "-"}, {"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "RSA riabilitazione", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    28: {"nome": "28ª Giornata lega", "serie_a": 30, "matches": [{"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}]},
+    29: {"nome": "29ª Giornata lega", "serie_a": 31, "matches": [{"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "NicoPanz", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Luton Down", "away": "UwU", "score": "-"}, {"home": "Al-Qaeda United", "away": "CHIVUISMO", "score": "-"}]},
+    30: {"nome": "30ª Giornata lega", "serie_a": 32, "matches": [{"home": "RSA riabilitazione", "away": "Al-Qaeda United", "score": "-"}, {"home": "CHIVUISMO", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "NicoPanz", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "BENE EH MANCO MALEN", "score": "-"}]},
+    31: {"nome": "31ª Giornata lega", "serie_a": 33, "matches": [{"home": "NicoPanz", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "RSA riabilitazione", "score": "-"}, {"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "score": "-"}]},
+    32: {"nome": "32ª Giornata lega", "serie_a": 34, "matches": [{"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "CHIVUISMO", "away": "UwU", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}]},
+    33: {"nome": "33ª Giornata lega", "serie_a": 35, "matches": [{"home": "NicoPanz", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "Luton Down", "away": "Al-Qaeda United", "score": "-"}, {"home": "CHIVUISMO", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}]},
+    34: {"nome": "34ª Giornata lega", "serie_a": 36, "matches": [{"home": "BENE EH MANCO MALEN", "away": "UwU", "score": "-"}, {"home": "RSA riabilitazione", "away": "CHIVUISMO", "score": "-"}, {"home": "Luton Down", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "Al-Qaeda United", "away": "NicoPanz", "score": "-"}]},
+    35: {"nome": "35ª Giornata lega", "serie_a": 37, "matches": [{"home": "NicoPanz", "away": "Luton Down", "score": "-"}, {"home": "CHIVUISMO", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "UwU", "away": "Al-Qaeda United", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "RSA riabilitazione", "score": "-"}]},
+    36: {"nome": "36ª Giornata lega", "serie_a": 38, "matches": [{"home": "Luton Down", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "CHIVUISMO", "away": "NicoPanz", "score": "-"}, {"home": "Al-Qaeda United", "away": "RSA riabilitazione", "score": "-"}, {"home": "Deportivo Sa Carogna", "away": "UwU", "score": "-"}]}
 }
 
 CALENDARIO_LEGA_2 = {
-    1: {"nome": "1ª Giornata lega", "serie_a": "3ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "FREE SAPOMODORO FC", "p_home": 75.5, "p_away": 71.0, "score": "2-1"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "p_home": 86.0, "p_away": 75.5, "score": "4-2"}, {"home": "HINTER X HINTER", "away": "Scrotone", "p_home": 83.0, "p_away": 73.0, "score": "3-2"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "p_home": 74.0, "p_away": 70.0, "score": "2-1"}]},
-    2: {"nome": "2ª Giornata lega", "serie_a": "4ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "p_home": 72.5, "p_away": 76.5, "score": "2-2"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "p_home": 77.0, "p_away": 79.5, "score": "2-3"}, {"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "p_home": 71.0, "p_away": 71.5, "score": "1-1"}, {"home": "IchNusa", "away": "CHIVUISMO", "p_home": 68.0, "p_away": 70.0, "score": "1-1"}]},
-    3: {"nome": "3ª Giornata lega", "serie_a": "5ª Giornata serie a", "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "IchNusa", "score": "-"}]},
-    4: {"nome": "4ª Giornata lega", "serie_a": "6ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "HINTER X HINTER", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    5: {"nome": "5ª Giornata lega", "serie_a": "7ª Giornata serie a", "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "Scrotone", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    6: {"nome": "6ª Giornata lega", "serie_a": "8ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
-    7: {"nome": "7ª Giornata lega", "serie_a": "9ª Giornata serie a", "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    8: {"nome": "8ª Giornata lega", "serie_a": "10ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "HINTER X HINTER", "score": "-"}, {"home": "Scrotone", "away": "FC Pinolandia", "score": "-"}, {"home": "IchNusa", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
-    9: {"nome": "9ª Giornata lega", "serie_a": "11ª Giornata serie a", "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    10: {"nome": "10ª Giornata lega", "serie_a": "12ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}]},
-    11: {"nome": "11ª Giornata lega", "serie_a": "13ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
-    12: {"nome": "12ª Giornata lega", "serie_a": "14ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}]},
-    13: {"nome": "13ª Giornata lega", "serie_a": "15ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "IchNusa", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "FC Pinolandia", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}]},
-    14: {"nome": "14ª Giornata lega", "serie_a": "16ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "FC Pinolandia", "score": "-"}]},
-    15: {"nome": "15ª Giornata lega", "serie_a": "17ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}]},
-    16: {"nome": "16ª Giornata lega", "serie_a": "18ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "Scrotone", "score": "-"}]},
-    17: {"nome": "17ª Giornata lega", "serie_a": "19ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    18: {"nome": "18ª Giornata lega", "serie_a": "20ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "FC Pinolandia", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    19: {"nome": "19ª Giornata lega", "serie_a": "21ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    20: {"nome": "20ª Giornata lega", "serie_a": "22ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "CHIVUISMO", "score": "-"}]},
-    21: {"nome": "21ª Giornata lega", "serie_a": "23ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    22: {"nome": "22ª Giornata lega", "serie_a": "24ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "IchNusa", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "CHIVUISMO", "score": "-"}]},
-    23: {"nome": "23ª Giornata lega", "serie_a": "25ª Giornata serie a", "matches": [{"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "IchNusa", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    24: {"nome": "24ª Giornata lega", "serie_a": "26ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "CHIVUISMO", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "score": "-"}]},
-    25: {"nome": "25ª Giornata lega", "serie_a": "27ª Giornata serie a", "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    26: {"nome": "26ª Giornata lega", "serie_a": "28ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
-    27: {"nome": "27ª Giornata lega", "serie_a": "29ª Giornata serie a", "matches": [{"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "CHIVUISMO", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "HINTER X HINTER", "away": "IchNusa", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FC Pinolandia", "score": "-"}]},
-    28: {"nome": "28ª Giornata lega", "serie_a": "30ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "FC Pinolandia", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
-    29: {"nome": "29ª Giornata lega", "serie_a": "31ª Giornata serie a", "matches": [{"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}]},
-    30: {"nome": "30ª Giornata lega", "serie_a": "32ª Giornata serie a", "matches": [{"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}, {"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "score": "-"}]},
-    31: {"nome": "31ª Giornata lega", "serie_a": "33ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    32: {"nome": "32ª Giornata lega", "serie_a": "34ª Giornata serie a", "matches": [{"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
-    33: {"nome": "33ª Giornata lega", "serie_a": "35ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}, {"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "score": "-"}]},
-    34: {"nome": "34ª Giornata lega", "serie_a": "36ª Giornata serie a", "matches": [{"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "IchNusa", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    35: {"nome": "35ª Giornata lega", "serie_a": "37ª Giornata serie a", "matches": [{"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    36: {"nome": "36ª Giornata lega", "serie_a": "38ª Giornata serie a", "matches": [{"home": "FC Pinolandia", "away": "HINTER X HINTER", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}]}
+    1: {"nome": "1ª Giornata lega", "serie_a": 3, "matches": [{"home": "CHIVUISMO", "away": "FREE SAPOMODORO FC", "p_home": 75.5, "p_away": 71.0, "score": "2-1"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "p_home": 86.0, "p_away": 75.5, "score": "4-2"}, {"home": "HINTER X HINTER", "away": "Scrotone", "p_home": 83.0, "p_away": 73.0, "score": "3-2"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "p_home": 74.0, "p_away": 70.0, "score": "2-1"}]},
+    2: {"nome": "2ª Giornata lega", "serie_a": 4, "matches": [{"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "p_home": 72.5, "p_away": 76.5, "score": "2-2"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "p_home": 77.0, "p_away": 79.5, "score": "2-3"}, {"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "p_home": 71.0, "p_away": 71.5, "score": "1-1"}, {"home": "IchNusa", "away": "CHIVUISMO", "p_home": 68.0, "p_away": 70.0, "score": "1-1"}]},
+    3: {"nome": "3ª Giornata lega", "serie_a": 5, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "IchNusa", "score": "-"}]},
+    4: {"nome": "4ª Giornata lega", "serie_a": 6, "matches": [{"home": "CHIVUISMO", "away": "HINTER X HINTER", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "COSTIERA ANALFITANA", "score": "-"}]},
+    5: {"nome": "5ª Giornata lega", "serie_a": 7, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "Scrotone", "away": "FREE SAPOMODORO FC", "score": "-"}]},
+    6: {"nome": "6ª Giornata lega", "serie_a": 8, "matches": [{"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
+    7: {"nome": "7ª Giornata lega", "serie_a": 9, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}]},
+    8: {"nome": "8ª Giornata lega", "serie_a": 10, "matches": [{"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "HINTER X HINTER", "score": "-"}, {"home": "Scrotone", "away": "FC Pinolandia", "score": "-"}, {"home": "IchNusa", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
+    9: {"nome": "9ª Giornata lega", "serie_a": 11, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
+    10: {"nome": "10ª Giornata lega", "serie_a": 12, "matches": [{"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}]},
+    11: {"nome": "11ª Giornata lega", "serie_a": 13, "matches": [{"home": "Scrotone", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
+    12: {"nome": "12ª Giornata lega", "serie_a": 14, "matches": [{"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}]},
+    13: {"nome": "13ª Giornata lega", "serie_a": 15, "matches": [{"home": "CHIVUISMO", "away": "IchNusa", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "FC Pinolandia", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}]},
+    14: {"nome": "14ª Giornata lega", "serie_a": 16, "matches": [{"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "FC Pinolandia", "score": "-"}]},
+    15: {"nome": "15ª Giornata lega", "serie_a": 17, "matches": [{"home": "Scrotone", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}]},
+    16: {"nome": "16ª Giornata lega", "serie_a": 18, "matches": [{"home": "FREE SAPOMODORO FC", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "Scrotone", "score": "-"}]},
+    17: {"nome": "17ª Giornata lega", "serie_a": 19, "matches": [{"home": "CHIVUISMO", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}]},
+    18: {"nome": "18ª Giornata lega", "serie_a": 20, "matches": [{"home": "Scrotone", "away": "FC Pinolandia", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
+    19: {"nome": "19ª Giornata lega", "serie_a": 21, "matches": [{"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}]},
+    20: {"nome": "20ª Giornata lega", "serie_a": 22, "matches": [{"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "CHIVUISMO", "score": "-"}]},
+    21: {"nome": "21ª Giornata lega", "serie_a": 23, "matches": [{"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}]},
+    22: {"nome": "22ª Giornata lega", "serie_a": 24, "matches": [{"home": "Scrotone", "away": "IchNusa", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "CHIVUISMO", "score": "-"}]},
+    23: {"nome": "23ª Giornata lega", "serie_a": 25, "matches": [{"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "IchNusa", "away": "COSTIERA ANALFITANA", "score": "-"}]},
+    24: {"nome": "24ª Giornata lega", "serie_a": 26, "matches": [{"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "CHIVUISMO", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "score": "-"}]},
+    25: {"nome": "25ª Giornata lega", "serie_a": 27, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "FC Pinolandia", "score": "-"}]},
+    26: {"nome": "26ª Giornata lega", "serie_a": 28, "matches": [{"home": "Scrotone", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
+    27: {"nome": "27ª Giornata lega", "serie_a": 29, "matches": [{"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "CHIVUISMO", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "HINTER X HINTER", "away": "IchNusa", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FC Pinolandia", "score": "-"}]},
+    28: {"nome": "28ª Giornata lega", "serie_a": 30, "matches": [{"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "FC Pinolandia", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
+    29: {"nome": "29ª Giornata lega", "serie_a": 31, "matches": [{"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}]},
+    30: {"nome": "30ª Giornata lega", "serie_a": 32, "matches": [{"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}, {"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "score": "-"}]},
+    31: {"nome": "31ª Giornata lega", "serie_a": 33, "matches": [{"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}]},
+    32: {"nome": "32ª Giornata lega", "serie_a": 34, "matches": [{"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
+    33: {"nome": "33ª Giornata lega", "serie_a": 35, "matches": [{"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}, {"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "score": "-"}]},
+    34: {"nome": "34ª Giornata lega", "serie_a": 36, "matches": [{"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "IchNusa", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}]},
+    35: {"nome": "35ª Giornata lega", "serie_a": 37, "matches": [{"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
+    36: {"nome": "36ª Giornata lega", "serie_a": 38, "matches": [{"home": "FC Pinolandia", "away": "HINTER X HINTER", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}]}
 }
 
 LEGHE = {
@@ -199,32 +200,96 @@ def get_fanta_session():
     return session if clean_cookie else None
 
 
-def fetch_tabellini_analizzati(slug, competition_id, round_num):
+def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_away):
     session = get_fanta_session()
     if not session:
-        return "Sessione non disponibile."
+        return None
 
-    # Interroghiamo l'endpoint del round (giornata calcolata con tabellini e voti)
-    candidates = [
-        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/dettaglioround?alias_lega={slug}&id_competizione={competition_id}&round={round_num}",
-        f"https://leghe.fantacalcio.it/servizi/v1_leghePartita/round?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}",
-        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/giornata?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}",
-        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/incontri?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}&dettaglio=1"
-    ]
+    # L'API SCOPERTA DAL NETWORK!
+    url = f"https://apileague.fantacalcio.it/gaming/v1/teamLineup/{competition_id}/{round_num}/{serie_a_round}/{id_home}/{id_away}"
+    try:
+        r = session.get(url, timeout=10)
+        if r.status_code == 200:
+            return r.json()
+    except Exception as e:
+        logger.error(f"Errore lineup: {e}")
+    return None
 
-    for url in candidates:
-        try:
-            r = session.get(url, timeout=7)
-            if r.status_code == 200:
-                payload = r.json()
-                if payload.get("success") and payload.get("data") != [round_num + 1]:
-                    raw_data = payload.get("data")
-                    preview = json.dumps(raw_data, ensure_ascii=False, indent=2)[:1500]
-                    return f"TROVATO SU {url.split('servizi/')[1][:30]}:\n{preview}"
-        except Exception:
+
+def fetch_tabellini_analizzati(lega, round_num):
+    comp_id = lega["competition_id"]
+    calendario = lega["calendario"]
+    giornata_info = calendario.get(round_num)
+    if not giornata_info:
+        return "Giornata non presente nel calendario."
+
+    serie_a_round = giornata_info.get("serie_a", round_num + 2)
+    matches = giornata_info.get("matches", [])
+
+    report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
+
+    for m in matches:
+        h_name = m["home"]
+        a_name = m["away"]
+        id_h = NAME_TO_ID.get(h_name.lower())
+        id_a = NAME_TO_ID.get(a_name.lower())
+        h_owner = OWNER_LOOKUP.get(h_name.lower(), "")
+        a_owner = OWNER_LOOKUP.get(a_name.lower(), "")
+
+        if not id_h or not id_a:
             continue
 
-    return "Nessuno degli endpoint ha restituito tabellini completi."
+        data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
+        score_text = m.get("score", "-")
+        p_h = m.get("p_home", "")
+        p_a = m.get("p_away", "")
+
+        report += f"\n⚔️ <b>{h_name}</b> ({h_owner}) <b>{p_h} [{score_text}] {p_a}</b> <b>{a_name}</b> ({a_owner})\n"
+
+        if not data:
+            report += "<i>(Dati formazioni in elaborazione...)</i>\n"
+            continue
+
+        # Elaboriamo formazioni di Casa e Trasferta
+        # L'API gaming/v1/teamLineup restituisce solitamente le due rose sotto home/away o teamHome/teamAway
+        payload = data.get("data", data)
+        home_team_data = payload.get("home") or payload.get("teamHome") or payload.get("squadraCasa") or {}
+        away_team_data = payload.get("away") or payload.get("teamAway") or payload.get("squadraTrasferta") or {}
+
+        for team_label, t_data, t_owner in [(h_name, home_team_data, h_owner), (a_name, away_team_data, a_owner)]:
+            if not isinstance(t_data, dict):
+                continue
+            lineup = t_data.get("lineup") or t_data.get("players") or t_data.get("calciatori") or []
+            
+            titolari_top = []
+            panchina_rimpianti = []
+
+            for p in lineup:
+                p_name = p.get("playerName") or p.get("nome") or p.get("name", "Giocatore")
+                vote = float(p.get("fantaVote") or p.get("votoFanta") or p.get("vote") or 0.0)
+                is_starter = p.get("starter") or p.get("titolare") or p.get("isStarter") or False
+                goals = int(p.get("goals") or p.get("gol") or 0)
+                assists = int(p.get("assists") or p.get("assist") or 0)
+
+                if is_starter:
+                    if goals > 0:
+                        titolari_top.append(f"{p_name} ⚽x{goals} (voto {vote})")
+                    elif vote <= 4.5 and vote > 0:
+                        titolari_top.append(f"{p_name} 💩 (voto {vote})")
+                else:
+                    if goals > 0:
+                        panchina_rimpianti.append(f"GOL DI {p_name.upper()} (voto {vote})")
+                    elif assists > 0:
+                        panchina_rimpianti.append(f"Assist di {p_name} (voto {vote})")
+                    elif vote >= 7.5:
+                        panchina_rimpianti.append(f"{p_name} (voto {vote})")
+
+            if titolari_top:
+                report += f"  • {team_label}: {', '.join(titolari_top)}\n"
+            if panchina_rimpianti:
+                report += f"  ⚠️ <b>PANCHINA {t_owner.upper()}:</b> {', '.join(panchina_rimpianti)} lasciati fuori!\n"
+
+    return report
 
 
 def fetch_classifica(slug, competition_id):
@@ -271,7 +336,7 @@ def get_calendario_testo(calendario, target_round=None):
     if not giornata:
         return f"⚠️ Giornata {target_round} non trovata nel calendario."
 
-    testo = f"⚽ <b>{giornata['nome'].upper()}</b>\n<i>({giornata['serie_a']})</i>\n\n"
+    testo = f"⚽ <b>{giornata['nome'].upper()}</b>\n<i>({giornata['serie_a']}ª Giornata Serie A)</i>\n\n"
     for m in giornata["matches"]:
         h = m['home']
         a = m['away']
@@ -293,19 +358,20 @@ def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
     Classifica attuale:
     {dati_classifica}
 
-    DATI REALI SULLA GIORNATA:
+    DATI UFFICIALI PARTITE, MARCATORI E PANCHINARI:
     {dati_tabellino}
 
     LINEE GUIDA RIGIDE:
     1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
-    2. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
-    3. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
-    4. Struttura del messaggio:
+    2. SE QUALCUNO HA LASCIATO GOL O BONUS IN PANCHINA, MASSACRALO SENZA PIETÀ! Fagli notare quanto è incompetente.
+    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
+    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
+    5. Struttura del messaggio:
        - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
        - Frase d'apertura tagliente.
-       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde.
+       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde citando chi ha segnato e chi ha sbagliato la formazione.
        - 🍀 <b>LO SCULATO:</b> Chi vince col minimo sforzo.
-       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via la giornata.
+       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via punti lasciando gol in panca o chi è ultimo.
        - 🤡 Chiusura con insulto corale.
 
     Massimo 280 parole.
@@ -413,11 +479,9 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Recupero struttura per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
-    res = fetch_tabellini_analizzati(lega["slug"], lega["competition_id"], giornata)
-
-    snippet = res.replace("<", "&lt;").replace(">", "&gt;")[:3500]
-    await update.message.reply_text(f"<code>{snippet}</code>", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico formazioni e panchine ufficiali per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    res = fetch_tabellini_analizzati(lega, giornata)
+    await update.message.reply_text(res[:4000], parse_mode="HTML")
 
 
 async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -429,10 +493,10 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Specifica la lega: /test_recap 1 o /test_recap 2")
         return
 
-    await update.message.reply_text(f"⏳ Generazione recap per <b>{lega['nome']}</b>...", parse_mode="HTML")
+    await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
-    tabellino_dati = fetch_tabellini_analizzati(lega["slug"], lega["competition_id"], 2)
-    recap = genera_recap_ai(classifica_testo, tabellino_dati, lega["nome"])
+    dati_tabellino = fetch_tabellini_analizzati(lega, 2)
+    recap = genera_recap_ai(classifica_testo, dati_tabellino, lega["nome"])
     try:
         await update.message.reply_text(recap, parse_mode="HTML")
     except Exception:
@@ -492,8 +556,8 @@ async def background_checker(app):
                         num_giocate = max((r.get("g", 0) for r in rows), default=0)
                         if num_giocate > config["ultima_giornata"] and config["ultima_giornata"] != 0:
                             classifica = fetch_classifica(config["slug"], config["competition_id"])
-                            tabellini = fetch_tabellini_analizzati(config["slug"], config["competition_id"], num_giocate)
-                            recap = genera_recap_ai(classifica, tabellini, config["nome"])
+                            tabellino = fetch_tabellini_analizzati(config, num_giocate)
+                            recap = genera_recap_ai(classifica, tabellino, config["nome"])
                             try:
                                 await app.bot.send_message(chat_id=chat_id, text=recap, parse_mode="HTML")
                             except Exception:
@@ -522,7 +586,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot avviato con endpoint round.")
+    logger.info("Bot Fantacalcio avviato con teamLineup reale.")
     app.run_polling()
 
 
