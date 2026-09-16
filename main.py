@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 FANTA_EMAIL = os.getenv("FANTA_EMAIL")
 FANTA_PASSWORD = os.getenv("FANTA_PASSWORD")
+FANTA_COOKIE = os.getenv("FANTA_COOKIE", "")
 TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 ADMIN_TELEGRAM_ID = int(os.getenv("ADMIN_TELEGRAM_ID", "6226253008"))
@@ -171,13 +172,18 @@ NEWS_NOTIFICATE = set()
 
 def get_fanta_session():
     session = requests.Session()
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    clean_cookie = FANTA_COOKIE.strip().replace("\r", " ").replace("\n", " ")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Referer": "https://leghe.fantacalcio.it/",
         "Origin": "https://leghe.fantacalcio.it",
         "Content-Type": "application/json",
         "app_key": FANTA_APP_KEY,
-    })
+    }
+    if clean_cookie:
+        headers["Cookie"] = clean_cookie
+
+    session.headers.update(headers)
     payload = {"username": FANTA_EMAIL, "password": FANTA_PASSWORD}
     try:
         res = session.post(LOGIN_URL, json=payload, timeout=10)
@@ -189,7 +195,84 @@ def get_fanta_session():
             return session
     except Exception as e:
         logger.error(f"Errore login: {e}")
-    return None
+    return session if clean_cookie else None
+
+
+def fetch_tabellini_analizzati(slug, competition_id, round_num):
+    session = get_fanta_session()
+    if not session:
+        return "Sessione non disponibile."
+
+    # Endpoint ufficiale per i dati partita completi
+    url = f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/incontri?alias_lega={slug}&id_competizione={competition_id}&giornata={round_num}"
+    try:
+        r = session.get(url, timeout=10)
+        if r.status_code != 200:
+            return f"Errore server {r.status_code}"
+        
+        data = r.json()
+        if not data.get("success"):
+            return f"Errore API: {data.get('error_msgs')}"
+
+        partite = data.get("data", [])
+        if not partite:
+            return "Nessuna partita trovata per questa giornata."
+
+        report = ""
+        for p in partite:
+            # Estrazione squadre e punteggi
+            h_name = p.get("squadra_casa", {}).get("nome", "Casa")
+            a_name = p.get("squadra_trasferta", {}).get("nome", "Trasferta")
+            h_owner = OWNER_LOOKUP.get(h_name.lower(), "")
+            a_owner = OWNER_LOOKUP.get(a_name.lower(), "")
+            
+            p_h = p.get("punti_casa", 0.0)
+            p_a = p.get("punti_trasferta", 0.0)
+            gol_h = p.get("gol_casa", 0)
+            gol_a = p.get("gol_trasferta", 0)
+
+            report += f"\n--- PARTITA: {h_name} ({h_owner}) [{gol_h}] {p_h} vs {p_a} [{gol_a}] {a_name} ({a_owner}) ---\n"
+
+            # Dettaglio calciatori Casa
+            for side, team_label in [("formazione_casa", h_name), ("formazione_trasferta", a_name)]:
+                formazione = p.get(side, {})
+                titolari = formazione.get("titolari", [])
+                panchinari = formazione.get("panchina", [])
+
+                # Marcatori ed espulsi titolari
+                titolari_top = []
+                for calz in titolari:
+                    n = calz.get("nome", "")
+                    v = calz.get("voto", 0.0)
+                    gf = calz.get("gol_fatti", 0)
+                    esp = calz.get("espulso", False)
+                    if gf > 0:
+                        titolari_top.append(f"{n} (GOL x{gf}, Voto {v})")
+                    elif esp:
+                        titolari_top.append(f"{n} (ESPULSO, Voto {v})")
+
+                # Bonus rimasti in panchina
+                panchina_rimpianti = []
+                for calz in panchinari:
+                    n = calz.get("nome", "")
+                    v = calz.get("voto", 0.0)
+                    gf = calz.get("gol_fatti", 0)
+                    ass = calz.get("assist", 0)
+                    if gf > 0:
+                        panchina_rimpianti.append(f"{n} (GOL IN PANCHINA! Voto {v})")
+                    elif ass > 0:
+                        panchina_rimpianti.append(f"{n} (Assist in panchina, Voto {v})")
+                    elif v >= 7.5:
+                        panchina_rimpianti.append(f"{n} (Voto {v} in panchina)")
+
+                report += f"• {team_label} Titolari salienti: {', '.join(titolari_top) if titolari_top else 'Nessun acuto'}\n"
+                if panchina_rimpianti:
+                    report += f"  ⚠️ RIMPIANTI PANCHINA: {', '.join(panchina_rimpianti)}\n"
+
+        return report
+    except Exception as e:
+        logger.error(f"Errore analisi tabellini: {e}")
+        return f"Errore interno: {e}"
 
 
 def fetch_classifica(slug, competition_id):
@@ -249,34 +332,39 @@ def get_calendario_testo(calendario, target_round=None):
     return testo
 
 
-def genera_recap_ai(dati_classifica, nome_lega):
+def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
     model = genai.GenerativeModel("gemini-3.1-flash-lite")
     prompt = f"""
-    Sei il commentatore sportivo più caustico, bastardo ed esilarante d'Italia. 
+    Sei il commentatore sportivo più caustico, spietato ed esilarante d'Italia. 
     Scrivi il recap ufficiale dell'ultima giornata per la lega: {nome_lega}.
 
-    Ecco la classifica e i punteggi aggiornati:
+    Classifica attuale:
     {dati_classifica}
 
-    LINEE GUIDA RIGIDE:
-    1. Prendi di mira i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
-    2. Usa formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI ASTERISCHI.
-    3. Segui questa struttura:
-       - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
-       - Battuta dissacrante sull'andamento delle partite.
-       - ⚽️ <b>I VERDETTI:</b> Commenta 2 o 3 squadre/risultati clou con cattiveria pura.
-       - 🍀 <b>LO SCULATO:</b> Chi vince con pochi punti.
-       - 💩 <b>IL BIDONE D'ORO:</b> Chi è in fondo alla classifica.
-       - 🤡 Chiusura con perculata finale.
+    DATI REALI SULLA GIORNATA (VOTI, SCONTRI E PANCHINARI):
+    {dati_tabellino}
 
-    Massimo 250 parole.
+    LINEE GUIDA RIGIDE:
+    1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
+    2. INFOGNA CHI HA LASCIATO GOL/BONUS IN PANCHINA: se nei dati sopra c'è scritto 'RIMPIANTI PANCHINA', umilia quel presidente facendogli notare il punteggio sprecato.
+    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
+    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
+    5. Struttura del messaggio:
+       - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
+       - Frase d'apertura tagliente.
+       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza 2 o 3 partite calde con titolari e panchinari.
+       - 🍀 <b>LO SCULATO:</b> Chi ha vinto col minimo sforzo o di misura.
+       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via la giornata o è ultimo.
+       - 🤡 Chiusura con insulto corale.
+
+    Massimo 280 parole.
     """
     try:
         res = model.generate_content(prompt)
         return res.text.replace("**", "<b>").replace("</b><b>", "")
     except Exception as e:
         logger.error(f"Errore Gemini: {e}")
-        return "⚠️ Errore recap."
+        return "⚠️ Errore generazione recap."
 
 
 def genera_alert_infortunio_ai(calciatore, squadra, proprietario, notizia_testo):
@@ -371,24 +459,22 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if update.effective_user.id != ADMIN_TELEGRAM_ID:
         return
 
-    session = get_fanta_session()
-    if not session:
-        await update.message.reply_text("❌ Login fallito.")
-        return
+    lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
+    giornata = 2
+    if context.args:
+        for a in context.args:
+            if a.isdigit() and int(a) > 2:
+                giornata = int(a)
 
-    await update.message.reply_text("🔍 Interrogo i tabellini della 2ª giornata...")
-    url = "https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/incontri?id_competizione=206672&giornata=2"
-    r = session.get(url, timeout=10)
-
-    if r.status_code == 200:
-        data = r.json()
-        keys = list(data.keys()) if isinstance(data, dict) else "Formato Lista"
-        await update.message.reply_text(f"✅ Dati ricevuti! Struttura: <code>{keys}</code>\nAnteprima: <code>{str(data)[:200]}</code>", parse_mode="HTML")
-        logger.info(f"Tabellino completo: {data}")
+    await update.message.reply_text(f"🔍 Interrogo i tabellini completi per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    res = fetch_tabellini_analizzati(lega["slug"], lega["competition_id"], giornata)
+    
+    if "PARTITA:" in res:
+        anteprima = res[:900].replace("<", "&lt;").replace(">", "&gt;")
+        await update.message.reply_text(f"✅ <b>AUTENTICAZIONE E TABELLINI OK!</b>\n\n<code>{anteprima}...</code>", parse_mode="HTML")
     else:
-        url_alt = "https://leghe.fantacalcio.it/servizi/v1_leghePartita/giornata?id_competizione=206672&giornata=2"
-        r_alt = session.get(url_alt, timeout=10)
-        await update.message.reply_text(f"Status incontri: {r.status_code}, Status alt: {r_alt.status_code}")
+        status_cookie = "Configurato" if FANTA_COOKIE else "NON impostato su Northflank"
+        await update.message.reply_text(f"❌ Impossibile leggere i tabellini.\nEsito: {res}\nStato FANTA_COOKIE: <b>{status_cookie}</b>", parse_mode="HTML")
 
 
 async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -400,9 +486,10 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Specifica la lega: /test_recap 1 o /test_recap 2")
         return
 
-    await update.message.reply_text(f"⏳ Generazione recap per <b>{lega['nome']}</b>...", parse_mode="HTML")
+    await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
-    recap = genera_recap_ai(classifica_testo, lega["nome"])
+    tabellino_dati = fetch_tabellini_analizzati(lega["slug"], lega["competition_id"], 2)
+    recap = genera_recap_ai(classifica_testo, tabellino_dati, lega["nome"])
     try:
         await update.message.reply_text(recap, parse_mode="HTML")
     except Exception:
@@ -462,7 +549,8 @@ async def background_checker(app):
                         num_giocate = max((r.get("g", 0) for r in rows), default=0)
                         if num_giocate > config["ultima_giornata"] and config["ultima_giornata"] != 0:
                             classifica = fetch_classifica(config["slug"], config["competition_id"])
-                            recap = genera_recap_ai(classifica, config["nome"])
+                            tabellini = fetch_tabellini_analizzati(config["slug"], config["competition_id"], num_giocate)
+                            recap = genera_recap_ai(classifica, tabellini, config["nome"])
                             try:
                                 await app.bot.send_message(chat_id=chat_id, text=recap, parse_mode="HTML")
                             except Exception:
@@ -491,7 +579,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot avviato.")
+    logger.info("Bot Fantacalcio pronto con analisi tabellini e panchine attiva.")
     app.run_polling()
 
 
