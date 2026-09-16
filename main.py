@@ -1,5 +1,6 @@
 import os
 import io
+import asyncio
 import logging
 import requests
 from bs4 import BeautifulSoup
@@ -129,7 +130,6 @@ def genera_immagine_formazioni(slug):
         res = session.get(url, timeout=10)
         soup = BeautifulSoup(res.text, "html.parser")
         
-        # Scheda grafica verde stile campo da calcio
         img = Image.new("RGB", (800, 600), color=(34, 139, 34))
         draw = ImageDraw.Draw(img)
         
@@ -156,7 +156,7 @@ def genera_immagine_formazioni(slug):
 
 
 def genera_recap_ai(dati_giornata):
-    """Invia i punteggi al modello Gemini configurato per il commento satirico."""
+    """Invia i punteggi al modello Gemini per il commento satirico."""
     model = genai.GenerativeModel("gemini-2.5-flash")
 
     prompt = f"""
@@ -214,38 +214,43 @@ async def cmd_formazioni(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("⚠️ Impossibile generare la scheda formazioni al momento.")
 
 
-async def job_controllo_calcolo(context: ContextTypes.DEFAULT_TYPE):
-    """Job periodico: controlla se una nuova giornata è stata calcolata."""
-    app = context.application
-    session = get_fanta_session()
-    if not session:
-        return
-
-    for chat_id, config in LEGHE.items():
-        if chat_id == 0 or not config["slug"]:
-            continue
+async def background_calcolo_checker(app):
+    """Loop asincrono in background: controlla ogni 20 minuti l'uscita dei voti/calcoli."""
+    await asyncio.sleep(10)  # Attesa iniziale prima del primo check
+    while True:
         try:
-            url = f"https://leghe.fantacalcio.it/{config['slug']}/ultima-giornata"
-            res = session.get(url, timeout=10)
-            if res.status_code != 200:
-                continue
+            session = get_fanta_session()
+            if session:
+                for chat_id, config in LEGHE.items():
+                    if chat_id == 0 or not config["slug"]:
+                        continue
+                    url = f"https://leghe.fantacalcio.it/{config['slug']}/ultima-giornata"
+                    res = session.get(url, timeout=10)
+                    if res.status_code != 200:
+                        continue
 
-            soup = BeautifulSoup(res.text, "html.parser")
-            
-            # Verifica se la giornata è definitiva/calcolata
-            calcolata = "definitiv" in res.text.lower() or "calcolata" in res.text.lower()
-            
-            giornata_tag = soup.find("span", class_="round-name")
-            num_giornata = int(''.join(filter(str.isdigit, giornata_tag.text))) if giornata_tag else 1
+                    soup = BeautifulSoup(res.text, "html.parser")
+                    calcolata = "definitiv" in res.text.lower() or "calcolata" in res.text.lower()
+                    
+                    giornata_tag = soup.find("span", class_="round-name")
+                    num_giornata = int(''.join(filter(str.isdigit, giornata_tag.text))) if giornata_tag else 1
 
-            if calcolata and num_giornata > config["ultima_giornata"]:
-                logger.info(f"Nuova giornata rilevata per {config['nome']}: {num_giornata}")
-                dati_grezzi = soup.get_text(separator=" ", strip=True)[:3500]
-                recap = genera_recap_ai(dati_grezzi)
-                await app.bot.send_message(chat_id=chat_id, text=recap, parse_mode="Markdown")
-                config["ultima_giornata"] = num_giornata
+                    if calcolata and num_giornata > config["ultima_giornata"]:
+                        logger.info(f"Nuova giornata rilevata per {config['nome']}: {num_giornata}")
+                        dati_grezzi = soup.get_text(separator=" ", strip=True)[:3500]
+                        recap = genera_recap_ai(dati_grezzi)
+                        await app.bot.send_message(chat_id=chat_id, text=recap, parse_mode="Markdown")
+                        config["ultima_giornata"] = num_giornata
         except Exception as e:
-            logger.error(f"Errore nel controllo per {config['slug']}: {e}")
+            logger.error(f"Errore nel loop di controllo calcolo: {e}")
+        
+        # Aspetta 20 minuti (1200 secondi) prima del prossimo controllo
+        await asyncio.sleep(1200)
+
+
+async def post_init(app):
+    """Avvia il task asincrono in background appena il bot è pronto."""
+    asyncio.create_task(background_calcolo_checker(app))
 
 
 def main():
@@ -253,16 +258,13 @@ def main():
         logger.error("TELEGRAM_BOT_TOKEN non configurato!")
         return
 
-    app = ApplicationBuilder().token(TG_TOKEN).build()
+    # Inizializzazione bot con post_init pulito
+    app = ApplicationBuilder().token(TG_TOKEN).post_init(post_init).build()
 
     # Registrazione Comandi
     app.add_handler(CommandHandler("classifica", cmd_classifica))
     app.add_handler(CommandHandler("incontri", cmd_incontri))
     app.add_handler(CommandHandler("formazioni", cmd_formazioni))
-
-    # Controllo periodico del calcolo ogni 20 minuti (1200 secondi) tramite JobQueue integrata
-    if app.job_queue:
-        app.job_queue.run_repeating(job_controllo_calcolo, interval=1200, first=10)
 
     logger.info("Bot Fantacalcio avviato con successo e in ascolto...")
     app.run_polling()
