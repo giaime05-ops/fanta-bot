@@ -23,7 +23,7 @@ CHAT_ID_LEGA_1 = int(os.getenv("CHAT_ID_LEGA_1", "0"))
 CHAT_ID_LEGA_2 = int(os.getenv("CHAT_ID_LEGA_2", "0"))
 
 TEAMS_MAP = {
-    # Lega 1
+    # Lega 1: Fanta4Reich
     18831834: {"name": "UwU", "owner": "gibo"},
     18883778: {"name": "NicoPanz", "owner": "Ciccio"},
     18833116: {"name": "Al-Qaeda United", "owner": "spoleto17"},
@@ -32,7 +32,7 @@ TEAMS_MAP = {
     18832350: {"name": "Luton Down", "owner": "Manuel"},
     18883572: {"name": "BENE EH MANCO MALEN", "owner": "Lamine Kialunga"},
     18885993: {"name": "RSA riabilitazione", "owner": "El vecho"},
-    # Lega 2
+    # Lega 2: Fantacalcio Stalloni
     19197193: {"name": "HINTER X HINTER", "owner": "gibo"},
     19196752: {"name": "DEMOCRAZIA CRISTANTE", "owner": "Cryan Bristante"},
     19213432: {"name": "COSTIERA ANALFITANA", "owner": "Manuel"},
@@ -207,16 +207,13 @@ def fetch_classifica(slug, competition_id):
         if not rows:
             return "Classifica al momento non disponibile."
 
-        testo = "🏆 <b>CLASSIFICA ATTUALE</b>\n\n<pre>"
+        testo = "🏆 <b>CLASSIFICA ATTUALE</b>\n\n"
         for i, row in enumerate(rows, 1):
             team_id = row.get("id")
             nome = TEAMS_MAP.get(team_id, {}).get("name", f"Squadra {team_id}")
-            # Tronca a 16 caratteri per garantire allineamento perfetto su mobile
-            nome_display = (nome[:15] + ".") if len(nome) > 16 else nome
             punti = int(row.get("p", 0))
             fanta_punti = float(row.get("s_p", 0.0))
-            testo += f"{i}. {nome_display:<16} {punti:>2}pt ({fanta_punti:>5.1f})\n"
-        testo += "</pre>"
+            testo += f"<b>{i}.</b> {nome} — <b>{punti} pt</b> <i>({fanta_punti} fp)</i>\n"
         return testo
     except Exception as e:
         logger.error(f"Errore classifica: {e}")
@@ -469,7 +466,7 @@ def main():
     app.add_handler(CommandHandler("rosa", cmd_rosa))
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
 
-    logger.info("Bot Fantacalcio attivo.")
+    logger.info("Bot Fantacalcio pronto.")
     app.run_polling()
 
 
