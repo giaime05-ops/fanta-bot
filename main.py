@@ -171,6 +171,7 @@ LEGHE = {
 LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
+PLAYERS_CACHE = {}
 
 
 def get_fanta_session():
@@ -209,6 +210,41 @@ def get_fanta_session():
     return session
 
 
+def get_players_map():
+    global PLAYERS_CACHE
+    if PLAYERS_CACHE:
+        return PLAYERS_CACHE
+
+    session = get_fanta_session()
+    if not session:
+        return {}
+
+    url = "https://apileague.fantacalcio.it/onboarding/v1/league/players"
+    try:
+        r = session.get(url, timeout=10)
+        if r.status_code == 200:
+            data = r.json()
+            items = data.get("data", data)
+            if isinstance(items, list):
+                for p in items:
+                    pid = p.get("id") or p.get("pid") or p.get("p_id")
+                    name = p.get("name") or p.get("n") or p.get("playerName") or p.get("cognome") or p.get("fullname")
+                    if pid and name:
+                        PLAYERS_CACHE[int(pid)] = name
+            elif isinstance(items, dict):
+                for k, v in items.items():
+                    if isinstance(v, dict):
+                        name = v.get("name") or v.get("n") or v.get("playerName") or v.get("cognome")
+                        if name:
+                            PLAYERS_CACHE[int(k)] = name
+                    elif isinstance(v, str):
+                        PLAYERS_CACHE[int(k)] = v
+    except Exception as e:
+        logger.error(f"Errore mappa giocatori: {e}")
+
+    return PLAYERS_CACHE
+
+
 def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_away):
     session = get_fanta_session()
     if not session:
@@ -227,13 +263,13 @@ def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_awa
 def fetch_tabellini_analizzati(lega, round_num):
     comp_id = lega["competition_id"]
     calendario = lega["calendario"]
-    rose_lega = lega["rose"]
     giornata_info = calendario.get(round_num)
     if not giornata_info:
         return "Giornata non presente nel calendario."
 
     serie_a_round = giornata_info.get("serie_a", round_num + 2)
     matches = giornata_info.get("matches", [])
+    players_map = get_players_map()
 
     report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
 
@@ -267,31 +303,27 @@ def fetch_tabellini_analizzati(lega, round_num):
 
             starts = team_obj.get("starts", [])
             bench = team_obj.get("bench", [])
-            rosa_squadra = rose_lega.get(team_label, [])
 
             titolari_top = []
             titolari_flop = []
             panchina_rimpianti = []
 
-            def get_nome_giocatore(idx):
-                if idx < len(rosa_squadra):
-                    return rosa_squadra[idx]
-                return f"Calciatore #{idx}"
-
-            for idx, p in enumerate(starts):
+            for p in starts:
+                pid = p.get("pid")
+                p_name = players_map.get(pid, f"Giocatore {pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
-                p_name = get_nome_giocatore(idx)
 
                 if fvoto >= 9.5 and fvoto < 50:
                     titolari_top.append(f"{p_name} ⚽ (FV {fvoto})")
                 elif voto <= 4.5 and voto > 0:
                     titolari_flop.append(f"{p_name} 💩 (voto {voto})")
 
-            for idx, p in enumerate(bench):
+            for p in bench:
+                pid = p.get("pid")
+                p_name = players_map.get(pid, f"Giocatore {pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
-                p_name = get_nome_giocatore(len(starts) + idx)
 
                 if fvoto >= 9.5 and fvoto < 50:
                     panchina_rimpianti.append(f"GOL DI {p_name.upper()} (FV {fvoto})")
@@ -495,7 +527,7 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Scarico formazioni e panchine per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico tabellini e anagrafica giocatori per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
 
@@ -602,7 +634,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con nomi reali.")
+    logger.info("Bot Fantacalcio operativo con mappatura PID sicura.")
     app.run_polling()
 
 
