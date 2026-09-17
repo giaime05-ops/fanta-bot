@@ -6,7 +6,7 @@ import requests
 import feedparser
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-import google.generativeai as genai
+from google import genai
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -19,8 +19,9 @@ TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 ADMIN_TELEGRAM_ID = int(os.getenv("ADMIN_TELEGRAM_ID", "6226253008"))
 
+client = None
 if GEMINI_KEY:
-    genai.configure(api_key=GEMINI_KEY)
+    client = genai.Client(api_key=GEMINI_KEY)
 
 CHAT_ID_LEGA_1 = int(os.getenv("CHAT_ID_LEGA_1", "0"))
 CHAT_ID_LEGA_2 = int(os.getenv("CHAT_ID_LEGA_2", "0"))
@@ -174,7 +175,7 @@ NEWS_NOTIFICATE = set()
 
 # Tabella ufficiale estratta dal file Excel del listone
 OFFICIAL_PLAYERS_MAP = {
-    5585: "Malen", 2764: "Martinez L.", 6052: "Hojlund", 4871: "Thuram", 6875: "Paz N.", 254: "Dimarco", 2194: "Calhanoglu", 6397: "Ramos G.", 7017: "Douvikas", 2097: "Kean", 7126: "Baturina", 4777: "McTominay", 2167: "Orsolini", 2423: "Pulisic", 2379: "Rabiot", 6752: "Woltemade", 5951: "Kolo Muani", 2848: "Frattesi", 5637: "Davis K.", 309: "Dybala", 2529: "Zaccagni", 7175: "Adzic", 2223: "Zielinski", 5373: "De Ketelaere", 5930: "Esposito F.P.", 6112: "Yildiz", 2826: "Pellegrini Lo.", 2419: "Saelemaekers", 5352: "Pinamonti", 4786: "Vlasic", 7078: "Akanji", 5334: "Samardzic", 2072: "Berardi", 4933: "Colpani", 7071: "Zortea", 5670: "Idzes", 6821: "Terracciano", 6204: "Kristensen T.", 7485: "Obert", 6869: "Mancini", 7023: "Beto", 6372: "Konè M.", 7484: "Sarr P.", 7347: "Adams A.", 1870: "Thorstvedt", 6462: "Scamacca", 2137: "Barella", 6989: "Samardzic", 6677: "Kean", 7554: "Varela G.", 5585: "Malen", 6415: "Atta", 6684: "Volpato", 4896: "Simeone", 4463: "Saelemaekers", 5500: "Pinamonti"
+    5585: "Malen", 2764: "Martinez L.", 6052: "Hojlund", 4871: "Thuram", 6875: "Paz N.", 254: "Dimarco", 2194: "Calhanoglu", 6397: "Ramos G.", 7017: "Douvikas", 2097: "Kean", 7126: "Baturina", 4777: "McTominay", 2167: "Orsolini", 2423: "Pulisic", 2379: "Rabiot", 6752: "Woltemade", 5951: "Kolo Muani", 2848: "Frattesi", 5637: "Davis K.", 309: "Dybala", 2529: "Zaccagni", 7175: "Adzic", 2223: "Zielinski", 5373: "De Ketelaere", 5930: "Esposito F.P.", 6112: "Yildiz", 2826: "Pellegrini Lo.", 2419: "Saelemaekers", 5352: "Pinamonti", 4786: "Vlasic", 7078: "Akanji", 5334: "Samardzic", 2072: "Berardi", 4933: "Colpani", 7071: "Zortea", 5670: "Idzes", 6821: "Terracciano", 6204: "Kristensen T.", 7485: "Obert", 6869: "Mancini", 7023: "Beto", 6372: "Konè M.", 7484: "Sarr P.", 7347: "Adams A.", 1870: "Thorstvedt", 6462: "Scamacca", 2137: "Barella", 6989: "Samardzic", 6677: "Kean", 7554: "Varela G.", 6415: "Atta", 6684: "Volpato", 4896: "Simeone", 4463: "Saelemaekers", 5500: "Pinamonti"
 }
 
 
@@ -353,7 +354,8 @@ def get_calendario_testo(calendario, target_round=None):
 
 
 def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
-    model = genai.GenerativeModel("gemini-3.1-flash-lite")
+    if not client:
+        return "⚠️ API Key Gemini non configurata."
     prompt = f"""
     Sei il commentatore sportivo più caustico, spietato ed esilarante d'Italia. 
     Scrivi il recap ufficiale dell'ultima giornata per la lega: {nome_lega}.
@@ -380,15 +382,19 @@ def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
     Massimo 280 parole.
     """
     try:
-        res = model.generate_content(prompt)
-        return res.text.replace("**", "<b>").replace("</b><b>", "")
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
+        return response.text.replace("**", "<b>").replace("</b><b>", "")
     except Exception as e:
         logger.error(f"Errore Gemini: {e}")
         return "⚠️ Errore generazione recap."
 
 
 def genera_alert_infortunio_ai(calciatore, squadra, proprietario, notizia_testo):
-    model = genai.GenerativeModel("gemini-3.1-flash-lite")
+    if not client:
+        return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
     prompt = f"""
     Sei un bot caustico di Fantacalcio. Notizia ricevuta: "{notizia_testo}".
     Il calciatore è {calciatore}, della squadra {squadra} (proprietario: {proprietario}).
@@ -396,8 +402,11 @@ def genera_alert_infortunio_ai(calciatore, squadra, proprietario, notizia_testo)
     Usa solo tag HTML <b>grassetto</b>. Massimo 50 parole.
     """
     try:
-        res = model.generate_content(prompt)
-        return res.text.replace("**", "<b>")
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
+        return response.text.replace("**", "<b>")
     except Exception:
         return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
 
@@ -589,9 +598,9 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con dizionario ufficiale da file Excel.")
+    logger.info("Bot Fantacalcio operativo.")
     app.run_polling()
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()
