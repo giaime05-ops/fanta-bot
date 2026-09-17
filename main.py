@@ -205,39 +205,31 @@ def get_players_map(slug, competition_id):
     session = get_fanta_session()
     mapping = {}
 
-    urls_to_try = [
-        f"https://apileague.fantacalcio.it/onboarding/v1/league/players?alias_lega={slug}&id_competizione={competition_id}",
-        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/giocatori?alias_lega={slug}&id_competizione={competition_id}",
-        "https://apileague.fantacalcio.it/onboarding/v1/league/players"
-    ]
+    # Usiamo direttamente l'URL esatto delle api di lega per i giocatori con i parametri corretti
+    url = f"https://apileague.fantacalcio.it/onboarding/v1/league/players"
+    params = {"alias_lega": slug, "id_competizione": competition_id}
 
-    for target_url in urls_to_try:
-        try:
-            r = session.get(target_url, timeout=10)
-            if r.status_code == 200:
-                data = r.json()
-                items = data.get("data", data)
-                
-                # Gestione sicura nel caso in cui items sia una lista o un dizionario
-                if isinstance(items, list):
-                    for p in items:
-                        if isinstance(p, dict):
-                            pid = p.get("id") or p.get("pid") or p.get("p_id") or p.get("IdCalciatore")
-                            name = p.get("name") or p.get("n") or p.get("playerName") or p.get("Nome") or p.get("cognome")
-                            if pid and name:
-                                mapping[int(pid)] = name
-                elif isinstance(items, dict):
-                    for k, v in items.items():
-                        if isinstance(v, dict):
-                            name = v.get("name") or v.get("n") or v.get("playerName") or v.get("Nome") or v.get("cognome")
-                            if name:
-                                mapping[int(k)] = name
-                        elif isinstance(v, str):
-                            mapping[int(k)] = v
-                if mapping:
-                    break
-        except Exception as e:
-            logger.error(f"Errore recupero anagrafica da {target_url}: {e}")
+    try:
+        r = session.get(url, params=params, timeout=10)
+        if r.status_code == 200:
+            data = r.json()
+            items = data.get("data", data)
+            if isinstance(items, list):
+                for p in items:
+                    pid = p.get("id") or p.get("pid") or p.get("p_id") or p.get("IdCalciatore")
+                    name = p.get("name") or p.get("n") or p.get("playerName") or p.get("Nome") or p.get("cognome")
+                    if pid and name:
+                        mapping[int(pid)] = name
+            elif isinstance(items, dict):
+                for k, v in items.items():
+                    if isinstance(v, dict):
+                        name = v.get("name") or v.get("n") or v.get("playerName") or v.get("Nome") or v.get("cognome")
+                        if name:
+                            mapping[int(k)] = name
+                    elif isinstance(v, str):
+                        mapping[int(k)] = v
+    except Exception as e:
+        logger.error(f"Errore caricamento anagrafica giocatori: {e}")
 
     PLAYERS_CACHE[cache_key] = mapping
     return mapping
@@ -526,7 +518,7 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Scarico tabellini in sicurezza per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico tabellini con anagrafica ufficiale per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
 
@@ -633,7 +625,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con gestione errori anagrafica blindata.")
+    logger.info("Bot Fantacalcio operativo con endpoint anagrafico ufficiale.")
     app.run_polling()
 
 
