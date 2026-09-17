@@ -216,31 +216,38 @@ def get_players_map():
         return PLAYERS_CACHE
 
     session = get_fanta_session()
-    if not session:
-        return {}
+    
+    # Elenco di endpoint ufficiali pubblici e interni da cui prelevare il listone
+    urls_da_provare = [
+        "https://www.fantacalcio.it/giorconi/qt/listone.json",
+        "https://apileague.fantacalcio.it/onboarding/v1/league/players"
+    ]
 
-    url = "https://apileague.fantacalcio.it/onboarding/v1/league/players"
-    try:
-        r = session.get(url, timeout=10)
-        if r.status_code == 200:
-            data = r.json()
-            items = data.get("data", data)
-            if isinstance(items, list):
-                for p in items:
-                    pid = p.get("id") or p.get("pid") or p.get("p_id")
-                    name = p.get("name") or p.get("n") or p.get("playerName") or p.get("cognome") or p.get("fullname")
-                    if pid and name:
-                        PLAYERS_CACHE[int(pid)] = name
-            elif isinstance(items, dict):
-                for k, v in items.items():
-                    if isinstance(v, dict):
-                        name = v.get("name") or v.get("n") or v.get("playerName") or v.get("cognome")
-                        if name:
-                            PLAYERS_CACHE[int(k)] = name
-                    elif isinstance(v, str):
-                        PLAYERS_CACHE[int(k)] = v
-    except Exception as e:
-        logger.error(f"Errore mappa giocatori: {e}")
+    for url in urls_da_provare:
+        try:
+            r = session.get(url, timeout=10)
+            if r.status_code == 200:
+                data = r.json()
+                items = data.get("data", data)
+                if isinstance(items, list):
+                    for p in items:
+                        pid = p.get("id") or p.get("pid") or p.get("IdCalciatore") or p.get("Codice")
+                        name = p.get("name") or p.get("n") or p.get("playerName") or p.get("Nome") or p.get("cognome") or p.get("S")
+                        if pid and name:
+                            PLAYERS_CACHE[int(pid)] = name
+                elif isinstance(items, dict):
+                    for k, v in items.items():
+                        if isinstance(v, dict):
+                            name = v.get("name") or v.get("n") or v.get("playerName") or v.get("Nome") or v.get("cognome")
+                            if name:
+                                PLAYERS_CACHE[int(k)] = name
+                        elif isinstance(v, str):
+                            PLAYERS_CACHE[int(k)] = v
+                if PLAYERS_CACHE:
+                    logger.info(f"Listone calciatori caricato con successo! Totale: {len(PLAYERS_CACHE)}")
+                    break
+        except Exception as e:
+            logger.error(f"Tentativo fallito su {url}: {e}")
 
     return PLAYERS_CACHE
 
@@ -310,7 +317,7 @@ def fetch_tabellini_analizzati(lega, round_num):
 
             for p in starts:
                 pid = p.get("pid")
-                p_name = players_map.get(pid, f"Giocatore {pid}")
+                p_name = players_map.get(pid, f"Calciatore #{pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
 
@@ -321,7 +328,7 @@ def fetch_tabellini_analizzati(lega, round_num):
 
             for p in bench:
                 pid = p.get("pid")
-                p_name = players_map.get(pid, f"Giocatore {pid}")
+                p_name = players_map.get(pid, f"Calciatore #{pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
 
@@ -527,7 +534,7 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Scarico tabellini e anagrafica giocatori per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico tabellini con anagrafica automatica per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
 
@@ -634,7 +641,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con mappatura PID sicura.")
+    logger.info("Bot Fantacalcio operativo con listone anagrafico automatico.")
     app.run_polling()
 
 
