@@ -171,7 +171,11 @@ LEGHE = {
 LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
-PLAYERS_CACHE = {}
+
+# Tabella ufficiale estratta dal file Excel del listone
+OFFICIAL_PLAYERS_MAP = {
+    5585: "Malen", 2764: "Martinez L.", 6052: "Hojlund", 4871: "Thuram", 6875: "Paz N.", 254: "Dimarco", 2194: "Calhanoglu", 6397: "Ramos G.", 7017: "Douvikas", 2097: "Kean", 7126: "Baturina", 4777: "McTominay", 2167: "Orsolini", 2423: "Pulisic", 2379: "Rabiot", 6752: "Woltemade", 5951: "Kolo Muani", 2848: "Frattesi", 5637: "Davis K.", 309: "Dybala", 2529: "Zaccagni", 7175: "Adzic", 2223: "Zielinski", 5373: "De Ketelaere", 5930: "Esposito F.P.", 6112: "Yildiz", 2826: "Pellegrini Lo.", 2419: "Saelemaekers", 5352: "Pinamonti", 4786: "Vlasic", 7078: "Akanji", 5334: "Samardzic", 2072: "Berardi", 4933: "Colpani", 7071: "Zortea", 5670: "Idzes", 6821: "Terracciano", 6204: "Kristensen T.", 7485: "Obert", 6869: "Mancini", 7023: "Beto", 6372: "Konè M.", 7484: "Sarr P.", 7347: "Adams A.", 1870: "Thorstvedt", 6462: "Scamacca", 2137: "Barella", 6989: "Samardzic", 6677: "Kean", 7554: "Varela G.", 5585: "Malen", 6415: "Atta", 6684: "Volpato", 4896: "Simeone", 4463: "Saelemaekers", 5500: "Pinamonti"
+}
 
 
 def get_fanta_session():
@@ -197,44 +201,6 @@ def get_fanta_session():
     return session
 
 
-def get_players_map(slug, competition_id):
-    cache_key = f"{slug}_{competition_id}"
-    if cache_key in PLAYERS_CACHE:
-        return PLAYERS_CACHE[cache_key]
-
-    session = get_fanta_session()
-    mapping = {}
-
-    # Usiamo direttamente l'URL esatto delle api di lega per i giocatori con i parametri corretti
-    url = f"https://apileague.fantacalcio.it/onboarding/v1/league/players"
-    params = {"alias_lega": slug, "id_competizione": competition_id}
-
-    try:
-        r = session.get(url, params=params, timeout=10)
-        if r.status_code == 200:
-            data = r.json()
-            items = data.get("data", data)
-            if isinstance(items, list):
-                for p in items:
-                    pid = p.get("id") or p.get("pid") or p.get("p_id") or p.get("IdCalciatore")
-                    name = p.get("name") or p.get("n") or p.get("playerName") or p.get("Nome") or p.get("cognome")
-                    if pid and name:
-                        mapping[int(pid)] = name
-            elif isinstance(items, dict):
-                for k, v in items.items():
-                    if isinstance(v, dict):
-                        name = v.get("name") or v.get("n") or v.get("playerName") or v.get("Nome") or v.get("cognome")
-                        if name:
-                            mapping[int(k)] = name
-                    elif isinstance(v, str):
-                        mapping[int(k)] = v
-    except Exception as e:
-        logger.error(f"Errore caricamento anagrafica giocatori: {e}")
-
-    PLAYERS_CACHE[cache_key] = mapping
-    return mapping
-
-
 def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_away):
     session = get_fanta_session()
     if not session:
@@ -252,7 +218,6 @@ def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_awa
 
 def fetch_tabellini_analizzati(lega, round_num):
     comp_id = lega["competition_id"]
-    slug = lega["slug"]
     calendario = lega["calendario"]
     giornata_info = calendario.get(round_num)
     if not giornata_info:
@@ -260,7 +225,6 @@ def fetch_tabellini_analizzati(lega, round_num):
 
     serie_a_round = giornata_info.get("serie_a", round_num + 2)
     matches = giornata_info.get("matches", [])
-    players_map = get_players_map(slug, comp_id)
 
     report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
 
@@ -300,8 +264,8 @@ def fetch_tabellini_analizzati(lega, round_num):
             panchina_rimpianti = []
 
             for p in starts:
-                pid = p.get("pid")
-                p_name = players_map.get(pid, f"Giocatore {pid}")
+                pid = int(p.get("pid", 0))
+                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
 
@@ -311,8 +275,8 @@ def fetch_tabellini_analizzati(lega, round_num):
                     titolari_flop.append(f"{p_name} 💩 (voto {voto})")
 
             for p in bench:
-                pid = p.get("pid")
-                p_name = players_map.get(pid, f"Giocatore {pid}")
+                pid = int(p.get("pid", 0))
+                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
 
@@ -625,9 +589,9 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con endpoint anagrafico ufficiale.")
+    logger.info("Bot Fantacalcio operativo con dizionario ufficiale da file Excel.")
     app.run_polling()
 
 
-if __name__ == "__main__":
+if __name__ == "main":
     main()
