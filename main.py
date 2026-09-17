@@ -171,6 +171,7 @@ LEGHE = {
 LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
+PLAYERS_CACHE = {}
 
 
 def get_fanta_session():
@@ -196,6 +197,53 @@ def get_fanta_session():
     return session
 
 
+def get_players_map(slug, competition_id):
+    cache_key = f"{slug}_{competition_id}"
+    if cache_key in PLAYERS_CACHE:
+        return PLAYERS_CACHE[cache_key]
+
+    session = get_fanta_session()
+    mapping = {}
+
+    # Endpoint ufficiale della lega per scaricare la lista dei giocatori associati
+    url = f"https://apileague.fantacalcio.it/onboarding/v1/league/players?alias_lega={slug}&id_competizione={competition_id}"
+    
+    # Fallback su endpoint alternativi ufficiali della lega
+    urls_to_try = [
+        url,
+        f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/giocatori?alias_lega={slug}&id_competizione={competition_id}",
+        "https://apileague.fantacalcio.it/onboarding/v1/league/players"
+    ]
+
+    for target_url in urls_to_try:
+        try:
+            r = session.get(target_url, timeout=10)
+            if r.status_code == 200:
+                data = r.json()
+                items = data.get("data", data)
+                if isinstance(items, list):
+                    for p in items:
+                        pid = p.get("id") or p.get("pid") or p.get("p_id") or p.get("IdCalciatore")
+                        name = p.get("name") or p.get("n") or p.get("playerName") or p.get("Nome") or p.get("cognome")
+                        if pid and name:
+                            mapping[int(pid)] = name
+                elif isinstance(items, dict):
+                    for k, v in items.items():
+                        if isinstance(v, dict):
+                            name = v.get("name") or v.get("n") or v.get("playerName") or v.get("Nome") or v.get("cognome")
+                            if name:
+                                mapping[int(k)] = name
+                        elif isinstance(v, str):
+                            mapping[int(k)] = v
+                if mapping:
+                    break
+        except Exception as e:
+            logger.error(f"Errore recupero anagrafica da {target_url}: {e}")
+
+    PLAYERS_CACHE[cache_key] = mapping
+    return mapping
+
+
 def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_away):
     session = get_fanta_session()
     if not session:
@@ -213,14 +261,15 @@ def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_awa
 
 def fetch_tabellini_analizzati(lega, round_num):
     comp_id = lega["competition_id"]
+    slug = lega["slug"]
     calendario = lega["calendario"]
-    rose_lega = lega["rose"]
     giornata_info = calendario.get(round_num)
     if not giornata_info:
         return "Giornata non presente nel calendario."
 
     serie_a_round = giornata_info.get("serie_a", round_num + 2)
     matches = giornata_info.get("matches", [])
+    players_map = get_players_map(slug, comp_id)
 
     report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
 
@@ -254,39 +303,28 @@ def fetch_tabellini_analizzati(lega, round_num):
 
             starts = team_obj.get("starts", [])
             bench = team_obj.get("bench", [])
-            rosa_squadra = rose_lega.get(team_label, [])
 
             titolari_top = []
             titolari_flop = []
             panchina_rimpianti = []
 
-            # Funzione di sicurezza che cerca il nome vero direttamente nella rosa della squadra inserita da te
-            def trova_nome_reale(pid, index_fallback):
-                # Se per caso il match contiene un nome o una stringa
-                if isinstance(pid, str) and not pid.isdigit():
-                    return pid
-                # Altrimenti, usiamo la rosa della squadra come riscontro diretto
-                if rosa_squadra and index_fallback < len(rosa_squadra):
-                    return rosa_squadra[index_fallback]
-                return f"Giocatore {pid}"
-
-            for idx, p in enumerate(starts):
+            for p in starts:
                 pid = p.get("pid")
+                # Se il dizionario della lega ha tradotto il pid, usiamo il nome reale, altrimenti fallback pulito
+                p_name = players_map.get(pid, f"Giocatore {pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
-                p_name = trova_nome_reale(pid, idx % len(rosa_squadra) if rosa_squadra else idx)
 
                 if fvoto >= 9.5 and fvoto < 50:
                     titolari_top.append(f"{p_name} ⚽ (FV {fvoto})")
                 elif voto <= 4.5 and voto > 0:
                     titolari_flop.append(f"{p_name} 💩 (voto {voto})")
 
-            for idx, p in enumerate(bench):
+            for p in bench:
                 pid = p.get("pid")
+                p_name = players_map.get(pid, f"Giocatore {pid}")
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
-                fallback_idx = (len(starts) + idx) % len(rosa_squadra) if rosa_squadra else idx
-                p_name = trova_nome_reale(pid, fallback_idx)
 
                 if fvoto >= 9.5 and fvoto < 50:
                     panchina_rimpianti.append(f"GOL DI {p_name.upper()} (FV {fvoto})")
@@ -490,7 +528,7 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Scarico tabellini per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico tabellini e anagrafica lega per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
 
@@ -597,7 +635,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo.")
+    logger.info("Bot Fantacalcio operativo con mappatura anagrafica lega.")
     app.run_polling()
 
 
