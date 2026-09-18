@@ -173,7 +173,6 @@ LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
 
-# Tabella ufficiale estratta dal file Excel del listone
 OFFICIAL_PLAYERS_MAP = {
     5585: "Malen", 2764: "Martinez L.", 6052: "Hojlund", 4871: "Thuram", 6875: "Paz N.", 254: "Dimarco", 2194: "Calhanoglu", 6397: "Ramos G.", 7017: "Douvikas", 2097: "Kean", 7126: "Baturina", 4777: "McTominay", 2167: "Orsolini", 2423: "Pulisic", 2379: "Rabiot", 6752: "Woltemade", 5951: "Kolo Muani", 2848: "Frattesi", 5637: "Davis K.", 309: "Dybala", 2529: "Zaccagni", 7175: "Adzic", 2223: "Zielinski", 5373: "De Ketelaere", 5930: "Esposito F.P.", 6112: "Yildiz", 2826: "Pellegrini Lo.", 2419: "Saelemaekers", 5352: "Pinamonti", 4786: "Vlasic", 7078: "Akanji", 5334: "Samardzic", 2072: "Berardi", 4933: "Colpani", 7071: "Zortea", 5670: "Idzes", 6821: "Terracciano", 6204: "Kristensen T.", 7485: "Obert", 6869: "Mancini", 7023: "Beto", 6372: "Konè M.", 7484: "Sarr P.", 7347: "Adams A.", 1870: "Thorstvedt", 6462: "Scamacca", 2137: "Barella", 6989: "Samardzic", 6677: "Kean", 7554: "Varela G.", 6415: "Atta", 6684: "Volpato", 4896: "Simeone", 4463: "Saelemaekers", 5500: "Pinamonti"
 }
@@ -227,7 +226,7 @@ def fetch_tabellini_analizzati(lega, round_num):
     serie_a_round = giornata_info.get("serie_a", round_num + 2)
     matches = giornata_info.get("matches", [])
 
-    report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
+    report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()} (MODALITÀ DEBUG PID)</b>\n"
 
     for m in matches:
         h_name = m["home"]
@@ -266,25 +265,27 @@ def fetch_tabellini_analizzati(lega, round_num):
 
             for p in starts:
                 pid = int(p.get("pid", 0))
-                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
+                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Sconosciuto")
+                display_name = f"{p_name} [PID:{pid}]"
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
 
                 if fvoto >= 9.5 and fvoto < 50:
-                    titolari_top.append(f"{p_name} ⚽ (FV {fvoto})")
+                    titolari_top.append(f"{display_name} ⚽ (FV {fvoto})")
                 elif voto <= 4.5 and voto > 0:
-                    titolari_flop.append(f"{p_name} 💩 (voto {voto})")
+                    titolari_flop.append(f"{display_name} 💩 (voto {voto})")
 
             for p in bench:
                 pid = int(p.get("pid", 0))
-                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
+                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Sconosciuto")
+                display_name = f"{p_name} [PID:{pid}]"
                 voto = float(p.get("scr", 0))
                 fvoto = float(p.get("cscr", 0))
 
                 if fvoto >= 9.5 and fvoto < 50:
-                    panchina_rimpianti.append(f"GOL DI {p_name.upper()} (FV {fvoto})")
+                    panchina_rimpianti.append(f"GOL DI {display_name.upper()} (FV {fvoto})")
                 elif voto >= 7.0 and voto < 50:
-                    panchina_rimpianti.append(f"{p_name} (voto {voto})")
+                    panchina_rimpianti.append(f"{display_name} (voto {voto})")
 
             if titolari_top:
                 report += f"  • {team_label} - Protagonisti: {', '.join(titolari_top)}\n"
@@ -491,7 +492,7 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
     giornata = 2
 
-    await update.message.reply_text(f"🔍 Scarico tabellini con anagrafica ufficiale per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico tabellini in modalità DEBUG per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
 
@@ -598,7 +599,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo.")
+    logger.info("Bot Fantacalcio in modalità DEBUG PID attivo.")
     app.run_polling()
 
 
