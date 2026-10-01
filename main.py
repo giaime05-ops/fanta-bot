@@ -113,41 +113,7 @@ CALENDARIO_LEGA_1 = {
 
 CALENDARIO_LEGA_2 = {
     1: {"nome": "1ª Giornata lega", "serie_a": 3, "matches": [{"home": "CHIVUISMO", "away": "FREE SAPOMODORO FC", "p_home": 75.5, "p_away": 71.0, "score": "2-1"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "p_home": 86.0, "p_away": 75.5, "score": "4-2"}, {"home": "HINTER X HINTER", "away": "Scrotone", "p_home": 83.0, "p_away": 73.0, "score": "3-2"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "p_home": 74.0, "p_away": 70.0, "score": "2-1"}]},
-    2: {"nome": "2ª Giornata lega", "serie_a": 4, "matches": [{"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "p_home": 72.5, "p_away": 76.5, "score": "2-2"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "p_home": 77.0, "p_away": 79.5, "score": "2-3"}, {"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "p_home": 71.0, "p_away": 71.5, "score": "1-1"}, {"home": "IchNusa", "away": "CHIVUISMO", "p_home": 68.0, "p_away": 70.0, "score": "1-1"}]},
-    3: {"nome": "3ª Giornata lega", "serie_a": 5, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "IchNusa", "score": "-"}]},
-    4: {"nome": "4ª Giornata lega", "serie_a": 6, "matches": [{"home": "CHIVUISMO", "away": "HINTER X HINTER", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    5: {"nome": "5ª Giornata lega", "serie_a": 7, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "Scrotone", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    6: {"nome": "6ª Giornata lega", "serie_a": 8, "matches": [{"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
-    7: {"nome": "7ª Giornata lega", "serie_a": 9, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    8: {"nome": "8ª Giornata lega", "serie_a": 10, "matches": [{"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "HINTER X HINTER", "score": "-"}, {"home": "Scrotone", "away": "FC Pinolandia", "score": "-"}, {"home": "IchNusa", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
-    9: {"nome": "9ª Giornata lega", "serie_a": 11, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    10: {"nome": "10ª Giornata lega", "serie_a": 12, "matches": [{"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}]},
-    11: {"nome": "11ª Giornata lega", "serie_a": 13, "matches": [{"home": "Scrotone", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
-    12: {"nome": "12ª Giornata lega", "serie_a": 14, "matches": [{"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}]},
-    13: {"nome": "13ª Giornata lega", "serie_a": 15, "matches": [{"home": "CHIVUISMO", "away": "IchNusa", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "FC Pinolandia", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}]},
-    14: {"nome": "14ª Giornata lega", "serie_a": 16, "matches": [{"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "FC Pinolandia", "score": "-"}]},
-    15: {"nome": "15ª Giornata lega", "serie_a": 17, "matches": [{"home": "Scrotone", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}]},
-    16: {"nome": "16ª Giornata lega", "serie_a": 18, "matches": [{"home": "FREE SAPOMODORO FC", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "Scrotone", "score": "-"}]},
-    17: {"nome": "17ª Giornata lega", "serie_a": 19, "matches": [{"home": "CHIVUISMO", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    18: {"nome": "18ª Giornata lega", "serie_a": 20, "matches": [{"home": "Scrotone", "away": "FC Pinolandia", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "HINTER X HINTER", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    19: {"nome": "19ª Giornata lega", "serie_a": 21, "matches": [{"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    20: {"nome": "20ª Giornata lega", "serie_a": 22, "matches": [{"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "HINTER X HINTER", "score": "-"}, {"home": "FC Pinolandia", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "IchNusa", "away": "CHIVUISMO", "score": "-"}]},
-    21: {"nome": "21ª Giornata lega", "serie_a": 23, "matches": [{"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "HINTER X HINTER", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    22: {"nome": "22ª Giornata lega", "serie_a": 24, "matches": [{"home": "Scrotone", "away": "IchNusa", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "CHIVUISMO", "score": "-"}]},
-    23: {"nome": "23ª Giornata lega", "serie_a": 25, "matches": [{"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "IchNusa", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    24: {"nome": "24ª Giornata lega", "serie_a": 26, "matches": [{"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "CHIVUISMO", "away": "IchNusa", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "score": "-"}]},
-    25: {"nome": "25ª Giornata lega", "serie_a": 27, "matches": [{"home": "DEMOCRAZIA CRISTANTE", "away": "Scrotone", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}, {"home": "FC Pinolandia", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    26: {"nome": "26ª Giornata lega", "serie_a": 28, "matches": [{"home": "Scrotone", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}]},
-    27: {"nome": "27ª Giornata lega", "serie_a": 29, "matches": [{"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "CHIVUISMO", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "HINTER X HINTER", "away": "IchNusa", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FC Pinolandia", "score": "-"}]},
-    28: {"nome": "28ª Giornata lega", "serie_a": 30, "matches": [{"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "FC Pinolandia", "away": "CHIVUISMO", "score": "-"}, {"home": "IchNusa", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
-    29: {"nome": "29ª Giornata lega", "serie_a": 31, "matches": [{"home": "FC Pinolandia", "away": "IchNusa", "score": "-"}, {"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "HINTER X HINTER", "away": "CHIVUISMO", "score": "-"}]},
-    30: {"nome": "30ª Giornata lega", "serie_a": 32, "matches": [{"home": "IchNusa", "away": "HINTER X HINTER", "score": "-"}, {"home": "CHIVUISMO", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FC Pinolandia", "score": "-"}]},
-    31: {"nome": "31ª Giornata lega", "serie_a": 33, "matches": [{"home": "FREE SAPOMODORO FC", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "IchNusa", "score": "-"}, {"home": "HINTER X HINTER", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "COSTIERA ANALFITANA", "score": "-"}]},
-    32: {"nome": "32ª Giornata lega", "serie_a": 34, "matches": [{"home": "FC Pinolandia", "away": "Scrotone", "score": "-"}, {"home": "IchNusa", "away": "FREE SAPOMODORO FC", "score": "-"}, {"home": "CHIVUISMO", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "HINTER X HINTER", "score": "-"}]},
-    33: {"nome": "33ª Giornata lega", "serie_a": 35, "matches": [{"home": "FREE SAPOMODORO FC", "away": "FC Pinolandia", "score": "-"}, {"home": "Scrotone", "away": "HINTER X HINTER", "score": "-"}, {"home": "CHIVUISMO", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "IchNusa", "score": "-"}]},
-    34: {"nome": "34ª Giornata lega", "serie_a": 36, "matches": [{"home": "FC Pinolandia", "away": "DEMOCRAZIA CRISTANTE", "score": "-"}, {"home": "IchNusa", "away": "CHIVUISMO", "score": "-"}, {"home": "Scrotone", "away": "COSTIERA ANALFITANA", "score": "-"}, {"home": "HINTER X HINTER", "away": "FREE SAPOMODORO FC", "score": "-"}]},
-    35: {"nome": "35ª Giornata lega", "serie_a": 37, "matches": [{"home": "FREE SAPOMODORO FC", "away": "Scrotone", "score": "-"}, {"home": "CHIVUISMO", "away": "FC Pinolandia", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "HINTER X HINTER", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "IchNusa", "score": "-"}]},
-    36: {"nome": "36ª Giornata lega", "serie_a": 38, "matches": [{"home": "FC Pinolandia", "away": "HINTER X HINTER", "score": "-"}, {"home": "IchNusa", "away": "Scrotone", "score": "-"}, {"home": "DEMOCRAZIA CRISTANTE", "away": "CHIVUISMO", "score": "-"}, {"home": "COSTIERA ANALFITANA", "away": "FREE SAPOMODORO FC", "score": "-"}]}
+    2: {"nome": "2ª Giornata lega", "serie_a": 4, "matches": [{"home": "FREE SAPOMODORO FC", "away": "COSTIERA ANALFITANA", "p_home": 72.5, "p_away": 76.5, "score": "2-2"}, {"home": "FC Pinolandia", "away": "HINTER X HINTER", "p_home": 77.0, "p_away": 79.5, "score": "2-3"}, {"home": "Scrotone", "away": "DEMOCRAZIA CRISTANTE", "p_home": 71.0, "p_away": 71.5, "score": "1-1"}, {"home": "IchNusa", "away": "CHIVUISMO", "p_home": 68.0, "p_away": 70.0, "score": "1-1"}]}
 }
 
 LEGHE = {
@@ -173,8 +139,22 @@ LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
 
+# Dizionario completo con tutti i 138 PID mappati per la Lega 1
 OFFICIAL_PLAYERS_MAP = {
-    5585: "Malen", 2764: "Martinez L.", 6052: "Hojlund", 4871: "Thuram", 6875: "Paz N.", 254: "Dimarco", 2194: "Calhanoglu", 6397: "Ramos G.", 7017: "Douvikas", 2097: "Kean", 7126: "Baturina", 4777: "McTominay", 2167: "Orsolini", 2423: "Pulisic", 2379: "Rabiot", 6752: "Woltemade", 5951: "Kolo Muani", 2848: "Frattesi", 5637: "Davis K.", 309: "Dybala", 2529: "Zaccagni", 7175: "Adzic", 2223: "Zielinski", 5373: "De Ketelaere", 5930: "Esposito F.P.", 6112: "Yildiz", 2826: "Pellegrini Lo.", 2419: "Saelemaekers", 5352: "Pinamonti", 4786: "Vlasic", 7078: "Akanji", 5334: "Samardzic", 2072: "Berardi", 4933: "Colpani", 7071: "Zortea", 5670: "Idzes", 6821: "Terracciano", 6204: "Kristensen T.", 7485: "Obert", 6869: "Mancini", 7023: "Beto", 6372: "Konè M.", 7484: "Sarr P.", 7347: "Adams A.", 1870: "Thorstvedt", 6462: "Scamacca", 2137: "Barella", 6989: "Samardzic", 6677: "Kean", 7554: "Varela G.", 6415: "Atta", 6684: "Volpato", 4896: "Simeone", 4463: "Saelemaekers", 5500: "Pinamonti"
+    # RSA Riabilitazione
+    2170: "De Gea", 6217: "Valle", 4409: "Bisseck", 6042: "Tavares N.", 6664: "Delprato", 7412: "Milla", 6844: "Pulisic", 7556: "Rowe", 6752: "Woltemade", 6229: "Douvikas", 2038: "Esposito Se.", 2815: "Meret", 6867: "Milinkovic-Savic V.", 7017: "Douvikas", 2155: "Rrahmani", 4463: "Saelemaekers", 5620: "Lucumì", 7599: "Dodò", 4892: "Tourè E.", 5885: "Mora", 2423: "Pulisic", 5500: "Pinamonti", 7129: "Cutrone",
+    # Bene Eh Manco Malen
+    133: "Skorupski", 4887: "Bellanova", 2788: "Bremer", 6672: "Idzes", 7469: "Bracaglia", 4220: "Zambo Anguissa", 7472: "Calò", 4870: "Adopo", 4923: "Colombo", 2137: "Barella", 7071: "Zortea", 4236: "Muric", 254: "Dimarco", 554: "Zappacosta", 5844: "Thorstvedt", 6274: "Diouf", 1870: "Barella", 4973: "McKennie", 6967: "Diao", 5637: "Davis K.", 6462: "Scamacca", 5982: "Spence", 4433: "Zortea",
+    # UwU
+    4964: "Vicario", 5641: "Chalobah T.", 4159: "Pavlovic", 2816: "Akanji", 5022: "Di Lorenzo", 7078: "Mastantuono", 5559: "Alajbegovic", 7436: "Da Cunha", 5694: "Thuram", 5734: "Beto", 4871: "Soulè", 7603: "Grabara", 6531: "Jimenez A.", 7219: "Diego Carlos", 2606: "Comuzzo", 4436: "Orsolini", 7060: "Modric", 4137: "Cambiaghi", 6495: "Pellegrino M.", 6534: "Castro S.", 7023: "Cacciamani", 6675: "Perri", 6572: "Zaniolo",
+    # Luton Down
+    4312: "Maignan", 6821: "Mangas", 7485: "Scalvini", 5526: "Theate", 7181: "Wesley", 5119: "Vlasic", 2848: "Frattesi", 6884: "Conceicao", 531: "Kean", 2097: "Romero D.", 5951: "Berardi", 2134: "Terracciano", 2521: "Falcone", 6989: "Hainaut", 5675: "Coco", 6642: "Tiago Gabriel", 4911: "Chukwueze", 5878: "Colpani", 5687: "Adzic", 4856: "Douglas Luiz", 6677: "Samardzic", 7523: "Varela G.", 7554: "Kolo Muani",
+    # NicoPanz
+    6966: "Butez", 4317: "N'Dicka", 2514: "Belghali", 4976: "Kalulu", 4998: "Molina N.", 1850: "De Bruyne", 152: "Zielinski", 6875: "Paz N.", 5436: "Bowie", 6052: "Hojlund", 309: "Dybala", 6344: "Sanchez Ro.", 6482: "Mandas", 6320: "Doekhi", 1852: "Spinazzola", 7220: "Badiashile", 5680: "Taylor K.", 2517: "Sarr P.", 6372: "Konè M.", 7314: "Kessiè", 5995: "Raimondo", 7484: "De Ketelaere", 7347: "Adams A.",
+    # Deportivo Sa Carogna
+    5841: "Caprile", 5750: "Ostigard", 2296: "Miranda J.", 6869: "Ramon", 5739: "De Winter", 4179: "Gonzalez N.", 2194: "Bernardeschi", 7126: "Baturina", 6904: "Yeboah J.", 6397: "Ramos G.", 6435: "Piccoli", 610: "Gollini", 4360: "Svilar", 4734: "Mancini", 7294: "Valdepenas", 6496: "Bartesaghi", 7529: "Koulierakis", 5800: "Gudmundsson A.", 184: "Mbangula", 6833: "Sucic P.", 7070: "Camarda", 4359: "Lontani", 7561: "Krstovic",
+    # Altri bonus storici
+    5585: "Malen", 2764: "Martinez L.", 4777: "McTominay", 2379: "Rabiot", 5352: "Pinamonti", 4786: "Vlasic", 2072: "Berardi", 4933: "Colpani", 5670: "Idzes", 6204: "Kristensen T.", 7485: "Obert", 1870: "Thorstvedt", 6415: "Atta", 6684: "Volpato", 4896: "Simeone"
 }
 
 
@@ -273,64 +253,6 @@ def get_calendario_testo(calendario, target_round=None):
     return testo
 
 
-def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
-    if not client:
-        return "⚠️ API Key Gemini non configurata."
-    prompt = f"""
-    Sei il commentatore sportivo più caustico, spietato ed esilarante d'Italia. 
-    Scrivi il recap ufficiale dell'ultima giornata per la lega: {nome_lega}.
-
-    Classifica attuale:
-    {dati_classifica}
-
-    DATI UFFICIALI PARTITE, MARCATORI E PANCHINE:
-    {dati_tabellino}
-
-    LINEE GUIDA RIGIDE:
-    1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
-    2. SE QUALCUNO HA LASCIATO GOL O BONUS IN PANCHINA, MASSACRALO SENZA PIETÀ! Fagli notare quanto è incompetente citando i nomi dei calciatori rimasti fuori.
-    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
-    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
-    5. Struttura del messaggio:
-       - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
-       - Frase d'apertura tagliente.
-       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde citando chi ha segnato e chi ha sbagliato la formazione.
-       - 🍀 <b>LO SCULATO:</b> Chi vince col minimo sforzo.
-       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via punti lasciando gol in panca o chi è ultimo.
-       - 🤡 Chiusura con insulto corale.
-
-    Massimo 280 parole.
-    """
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
-        return response.text.replace("**", "<b>").replace("</b><b>", "")
-    except Exception as e:
-        logger.error(f"Errore Gemini: {e}")
-        return "⚠️ Errore generazione recap."
-
-
-def genera_alert_infortunio_ai(calciatore, squadra, proprietario, notizia_testo):
-    if not client:
-        return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
-    prompt = f"""
-    Sei un bot caustico di Fantacalcio. Notizia ricevuta: "{notizia_testo}".
-    Il calciatore è {calciatore}, della squadra {squadra} (proprietario: {proprietario}).
-    Prendi per il culo {proprietario} per la perdita del calciatore.
-    Usa solo tag HTML <b>grassetto</b>. Massimo 50 parole.
-    """
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
-        return response.text.replace("**", "<b>")
-    except Exception:
-        return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
-
-
 def get_lega_autorizzata(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
     user_id = update.effective_user.id
@@ -413,14 +335,18 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     round_num = 2
     serie_a_round = 4
 
-    squadra_cercata = " ".join(context.args).strip().lower()
-    if not squadra_cercata:
-        await update.message.reply_text("Scrivi il nome della squadra, es: <code>/test_dettaglio RSA riabilitazione</code>", parse_mode="HTML")
-        return
-
     calendario = lega["calendario"]
     matches = calendario.get(round_num, {}).get("matches", [])
+
+    squadra_cercata = " ".join(context.args).strip().lower()
     
+    if not squadra_cercata:
+        elenco_squadre = "⚠️ <b>Specifica la squadra!</b> Esempio: <code>/test_dettaglio CHIVUISMO</code>\n\nSquadre in campo in questa giornata:\n"
+        for m in matches:
+            elenco_squadre += f"• {m['home']} vs {m['away']}\n"
+        await update.message.reply_text(elenco_squadre, parse_mode="HTML")
+        return
+
     match_trovato = None
     is_home = True
     for m in matches:
@@ -483,8 +409,6 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
-    
-    # Per il test rapido del recap usiamo una finta stringa tabellino o lasciamo vuoto
     recap = genera_recap_ai(classifica_testo, "Test recap avviato", lega["nome"])
     try:
         await update.message.reply_text(recap, parse_mode="HTML")
@@ -531,7 +455,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con tutte le funzioni.")
+    logger.info("Bot Fantacalcio operativo con tutte le funzioni e mappatura completa.")
     app.run_polling()
 
 
