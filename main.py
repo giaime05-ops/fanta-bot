@@ -75,7 +75,7 @@ ROSE_LEGA_2 = {
 CALENDARIO_LEGA_1 = {
     1: {"nome": "1ª Giornata lega", "serie_a": 3, "matches": [{"home": "Al-Qaeda United", "away": "RSA riabilitazione", "p_home": 70.0, "p_away": 64.0, "score": "1-0"}, {"home": "Deportivo Sa Carogna", "away": "Luton Down", "p_home": 75.5, "p_away": 70.5, "score": "2-1"}, {"home": "BENE EH MANCO MALEN", "away": "UwU", "p_home": 74.5, "p_away": 79.0, "score": "2-3"}, {"home": "CHIVUISMO", "away": "NicoPanz", "p_home": 78.5, "p_away": 84.5, "score": "3-4"}]},
     2: {"nome": "2ª Giornata lega", "serie_a": 4, "matches": [{"home": "RSA riabilitazione", "away": "CHIVUISMO", "p_home": 67.0, "p_away": 77.0, "score": "1-2"}, {"home": "NicoPanz", "away": "BENE EH MANCO MALEN", "p_home": 68.0, "p_away": 67.5, "score": "1-1"}, {"home": "UwU", "away": "Deportivo Sa Carogna", "p_home": 80.5, "p_away": 73.0, "score": "3-2"}, {"home": "Luton Down", "away": "Al-Qaeda United", "p_home": 75.5, "p_away": 76.0, "score": "2-2"}]},
-    3: {"nome": "3ª Giornata lega", "serie_a": 5, "matches": [{"home": "Deportivo Sa Carogna", "away": "NicoPanz", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "score": "-"}, {"home": "CHIVUISMO", "away": "Al-Qaeda United", "score": "-"}, {"home": "UwU", "away": "Luton Down", "score": "-"}]},
+    3: {"nome": "3ª Giornata lega", "serie_a": 5, "matches": [{"home": "Deportivo Sa Carogna", "away": "NicoPanz", "p_home": 72.0, "p_away": 75.0, "score": "1-2"}, {"home": "BENE EH MANCO MALEN", "away": "RSA riabilitazione", "p_home": 74.0, "p_away": 71.0, "score": "2-1"}, {"home": "CHIVUISMO", "away": "Al-Qaeda United", "p_home": 68.5, "p_away": 73.0, "score": "1-2"}, {"home": "UwU", "away": "Luton Down", "p_home": 81.0, "p_away": 74.0, "score": "3-1"}]},
     4: {"nome": "4ª Giornata lega", "serie_a": 6, "matches": [{"home": "Al-Qaeda United", "away": "BENE EH MANCO MALEN", "score": "-"}, {"home": "RSA riabilitazione", "away": "Deportivo Sa Carogna", "score": "-"}, {"home": "NicoPanz", "away": "UwU", "score": "-"}, {"home": "Luton Down", "away": "CHIVUISMO", "score": "-"}]},
     5: {"nome": "5ª Giornata lega", "serie_a": 7, "matches": [{"home": "Deportivo Sa Carogna", "away": "Al-Qaeda United", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "CHIVUISMO", "score": "-"}, {"home": "NicoPanz", "away": "Luton Down", "score": "-"}, {"home": "UwU", "away": "RSA riabilitazione", "score": "-"}]},
     6: {"nome": "6ª Giornata lega", "serie_a": 8, "matches": [{"home": "Al-Qaeda United", "away": "UwU", "score": "-"}, {"home": "RSA riabilitazione", "away": "NicoPanz", "score": "-"}, {"home": "BENE EH MANCO MALEN", "away": "Luton Down", "score": "-"}, {"home": "CHIVUISMO", "away": "Deportivo Sa Carogna", "score": "-"}]},
@@ -139,7 +139,6 @@ LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
 
-# Dizionario ufficiale con tutti i 138 PID mappati
 OFFICIAL_PLAYERS_MAP = {
     # RSA Riabilitazione
     2170: "De Gea", 6217: "Valle", 4409: "Bisseck", 6042: "Tavares N.", 6664: "Delprato", 7412: "Milla", 6844: "Pulisic", 7556: "Rowe", 6752: "Woltemade", 6229: "Douvikas", 2038: "Esposito Se.", 2815: "Meret", 6867: "Milinkovic-Savic V.", 7017: "Douvikas", 2155: "Rrahmani", 4463: "Saelemaekers", 5620: "Lucumì", 7599: "Dodò", 4892: "Tourè E.", 5885: "Mora", 2423: "Pulisic", 5500: "Pinamonti", 7129: "Cutrone",
@@ -201,7 +200,7 @@ def fetch_tabellini_analizzati(lega, round_num):
     calendario = lega["calendario"]
     giornata_info = calendario.get(round_num)
     if not giornata_info:
-        return "Giornata non presente nel calendario."
+        return f"Giornata {round_num} non presente nel calendario."
 
     serie_a_round = giornata_info.get("serie_a", round_num + 2)
     matches = giornata_info.get("matches", [])
@@ -332,64 +331,6 @@ def get_calendario_testo(calendario, target_round=None):
     return testo
 
 
-def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
-    if not client:
-        return "⚠️ API Key Gemini non configurata."
-    prompt = f"""
-    Sei il commentatore sportivo più caustico, spietato ed esilarante d'Italia. 
-    Scrivi il recap ufficiale dell'ultima giornata per la lega: {nome_lega}.
-
-    Classifica attuale:
-    {dati_classifica}
-
-    DATI UFFICIALI PARTITE, MARCATORI E PANCHINE:
-    {dati_tabellino}
-
-    LINEE GUIDA RIGIDE:
-    1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
-    2. SE QUALCUNO HA LASCIATO GOL O BONUS IN PANCHINA, MASSACRALO SENZA PIETÀ! Fagli notare quanto è incompetente citando i nomi dei calciatori rimasti fuori.
-    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
-    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
-    5. Struttura del messaggio:
-       - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
-       - Frase d'apertura tagliente.
-       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde citando chi ha segnato e chi ha sbagliato la formazione.
-       - 🍀 <b>LO SCULATO:</b> Chi vince col minimo sforzo.
-       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via punti lasciando gol in panca o chi è ultimo.
-       - 🤡 Chiusura con insulto corale.
-
-    Massimo 280 parole.
-    """
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
-        return response.text.replace("**", "<b>").replace("</b><b>", "")
-    except Exception as e:
-        logger.error(f"Errore Gemini: {e}")
-        return "⚠️ Errore generazione recap."
-
-
-def genera_alert_infortunio_ai(calciatore, squadra, proprietario, notizia_testo):
-    if not client:
-        return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
-    prompt = f"""
-    Sei un bot caustico di Fantacalcio. Notizia ricevuta: "{notizia_testo}".
-    Il calciatore è {calciatore}, della squadra {squadra} (proprietario: {proprietario}).
-    Prendi per il culo {proprietario} per la perdita del calciatore.
-    Usa solo tag HTML <b>grassetto</b>. Massimo 50 parole.
-    """
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
-        return response.text.replace("**", "<b>")
-    except Exception:
-        return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
-
-
 def get_lega_autorizzata(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
     user_id = update.effective_user.id
@@ -399,11 +340,9 @@ def get_lega_autorizzata(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if chat.type == "private" and ADMIN_TELEGRAM_ID != 0 and user_id == ADMIN_TELEGRAM_ID:
         if context.args:
-            scelta = context.args[0].strip()
-            if scelta == "1":
-                return LEGHE[CHAT_ID_LEGA_1]
-            elif scelta == "2":
-                return LEGHE[CHAT_ID_LEGA_2]
+            for arg in context.args:
+                if arg in ["1", "2"]:
+                    return LEGHE[CHAT_ID_LEGA_1 if arg == "1" else CHAT_ID_LEGA_2]
         return LEGHE[CHAT_ID_LEGA_1]
     return None
 
@@ -463,18 +402,96 @@ async def cmd_rosa(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Squadra non trovata.")
 
 
-async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# COMANDO 1: /dettaglio [giornata] (es. /dettaglio 3)
+async def cmd_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_TELEGRAM_ID:
         return
 
     lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
-    giornata = 2
-    if context.args and context.args[0].isdigit():
-        giornata = int(context.args[0])
+    giornata = 3  # Default terza giornata
+    if context.args:
+        for arg in context.args:
+            if arg.isdigit():
+                giornata = int(arg)
+                break
 
-    await update.message.reply_text(f"🔍 Scarico tabellini ufficiali con mappa PID per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico tabellini ufficiali per <b>{lega['nome']}</b> (Giornata {giornata})...", parse_mode="HTML")
     res = fetch_tabellini_analizzati(lega, giornata)
     await update.message.reply_text(res[:4000], parse_mode="HTML")
+
+
+# COMANDO 2: /squadra [NomeSquadra] (es. /squadra CHIVUISMO)
+async def cmd_squadra(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_TELEGRAM_ID:
+        return
+
+    lega = LEGHE[CHAT_ID_LEGA_1]
+    comp_id = lega["competition_id"]
+    round_num = 3  # 3ª giornata
+    serie_a_round = 5
+
+    calendario = lega["calendario"]
+    matches = calendario.get(round_num, {}).get("matches", [])
+
+    squadra_cercata = " ".join([a for a in context.args if a not in ["1", "2"]]).strip().lower()
+    if not squadra_cercata:
+        elenco = "\n".join([f"• <b>{m['home']}</b> vs <b>{m['away']}</b>" for m in matches])
+        await update.message.reply_text(f"⚠️ <b>Specifica la squadra!</b> Esempio: <code>/squadra CHIVUISMO</code>\n\nPartite della 3ª giornata:\n{elenco}", parse_mode="HTML")
+        return
+
+    match_trovato = None
+    is_home = True
+    for m in matches:
+        if squadra_cercata in m["home"].lower():
+            match_trovato = m
+            is_home = True
+            break
+        elif squadra_cercata in m["away"].lower():
+            match_trovato = m
+            is_home = False
+            break
+
+    if not match_trovato:
+        await update.message.reply_text("Squadra non trovata in questa giornata.")
+        return
+
+    h_name = match_trovato["home"]
+    a_name = match_trovato["away"]
+    id_h = NAME_TO_ID.get(h_name.lower())
+    id_a = NAME_TO_ID.get(a_name.lower())
+
+    data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
+    if not data:
+        await update.message.reply_text("Errore nel recupero della formazione dal server.")
+        return
+
+    target_team_label = h_name if is_home else a_name
+    target_team_obj = data.get("home", {}) if is_home else data.get("away", {})
+
+    if not target_team_obj or not isinstance(target_team_obj, dict):
+        await update.message.reply_text("Formazione non disponibile per questa squadra.")
+        return
+
+    starts = target_team_obj.get("starts", [])
+    bench = target_team_obj.get("bench", [])
+
+    testo = f"🛡 <b>ESTRAZIONE ROSA SCHIERATA: {target_team_label.upper()}</b>\n\n<b>TITOLARI:</b>\n"
+    for p in starts:
+        pid = int(p.get("pid", 0))
+        p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
+        voto = p.get("scr", 0)
+        fvoto = p.get("cscr", 0)
+        testo += f"• <code>PID {pid}</code> ➔ {p_name} (Voto: {voto}, FV: {fvoto})\n"
+
+    testo += "\n<b>PANCHINA:</b>\n"
+    for p in bench:
+        pid = int(p.get("pid", 0))
+        p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
+        voto = p.get("scr", 0)
+        fvoto = p.get("cscr", 0)
+        testo += f"• <code>PID {pid}</code> ➔ {p_name} (Voto: {voto}, FV: {fvoto})\n"
+
+    await update.message.reply_text(testo[:4000], parse_mode="HTML")
 
 
 async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -488,7 +505,7 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
-    dati_tabellino = fetch_tabellini_analizzati(lega, 2)
+    dati_tabellino = fetch_tabellini_analizzati(lega, 3)
     recap = genera_recap_ai(classifica_testo, dati_tabellino, lega["nome"])
     try:
         await update.message.reply_text(recap, parse_mode="HTML")
@@ -504,28 +521,6 @@ async def check_infortuni_e_news(app):
             entry_id = entry.get("id") or entry.get("link")
             if entry_id in NEWS_NOTIFICATE:
                 continue
-
-            titolo = entry.get("title", "")
-            sommario = entry.get("summary", "")
-            testo_news = f"{titolo} - {sommario}"
-
-            parole_chiave = ["infortunio", "lesione", "stop", "distorsione", "salta", "operazione", "ceduto", "ufficiale"]
-            if any(k in testo_news.lower() for k in parole_chiave):
-                for chat_id, lega in LEGHE.items():
-                    if chat_id == 0:
-                        continue
-                    rose = lega["rose"]
-                    for team_name, players in rose.items():
-                        for p in players:
-                            if p.lower() in testo_news.lower() and len(p) > 3:
-                                owner = OWNER_LOOKUP.get(team_name.lower(), "Mister")
-                                alert_msg = genera_alert_infortunio_ai(p, team_name, owner, testo_news)
-                                try:
-                                    await app.bot.send_message(chat_id=chat_id, text=alert_msg, parse_mode="HTML")
-                                except Exception:
-                                    await app.bot.send_message(chat_id=chat_id, text=alert_msg)
-                                break
-
             NEWS_NOTIFICATE.add(entry_id)
     except Exception as e:
         logger.error(f"Errore feed news: {e}")
@@ -536,28 +531,6 @@ async def background_checker(app):
     while True:
         try:
             await check_infortuni_e_news(app)
-
-            session = get_fanta_session()
-            if session:
-                for chat_id, config in LEGHE.items():
-                    if chat_id == 0 or not config["slug"]:
-                        continue
-                    url = f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/classificagiornate?alias_lega={config['slug']}&id_competizione={config['competition_id']}&giornata_inizio=1&giornata_fine=38"
-                    res = session.get(url, timeout=10)
-                    if res.status_code == 200:
-                        rows = res.json().get("data", [])
-                        num_giocate = max((r.get("g", 0) for r in rows), default=0)
-                        if num_giocate > config["ultima_giornata"] and config["ultima_giornata"] != 0:
-                            classifica = fetch_classifica(config["slug"], config["competition_id"])
-                            tabellino = fetch_tabellini_analizzati(config, num_giocate)
-                            recap = genera_recap_ai(classifica, tabellino, config["nome"])
-                            try:
-                                await app.bot.send_message(chat_id=chat_id, text=recap, parse_mode="HTML")
-                            except Exception:
-                                await app.bot.send_message(chat_id=chat_id, text=recap)
-                            config["ultima_giornata"] = num_giocate
-                        elif config["ultima_giornata"] == 0:
-                            config["ultima_giornata"] = num_giocate
         except Exception as e:
             logger.error(f"Errore background: {e}")
         await asyncio.sleep(1200)
@@ -577,9 +550,10 @@ def main():
     app.add_handler(CommandHandler(["calendario", "incontri"], cmd_calendario))
     app.add_handler(CommandHandler("rosa", cmd_rosa))
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
-    app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
+    app.add_handler(CommandHandler("dettaglio", cmd_dettaglio))
+    app.add_handler(CommandHandler("squadra", cmd_squadra))
 
-    logger.info("Bot Fantacalcio operativo con tutte le funzioni e mappatura completa.")
+    logger.info("Bot Fantacalcio operativo con comandi separati /dettaglio e /squadra.")
     app.run_polling()
 
 
