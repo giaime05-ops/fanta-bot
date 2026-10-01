@@ -376,6 +376,10 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     target_team_label = h_name if is_home else a_name
     target_team_obj = data.get("home", {}) if is_home else data.get("away", {})
 
+    if not target_team_obj or not isinstance(target_team_obj, dict):
+        await update.message.reply_text("Formazione non ancora disponibile per questa squadra.")
+        return
+
     starts = target_team_obj.get("starts", [])
     bench = target_team_obj.get("bench", [])
 
@@ -455,7 +459,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con tutte le funzioni e mappatura completa.")
+    logger.info("Bot Fantacalcio operativo con controllo anti-crash.")
     app.run_polling()
 
 
