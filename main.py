@@ -139,7 +139,7 @@ LOGIN_URL = "https://apileague.fantacalcio.it/onboarding/v1/login"
 FANTA_APP_KEY = "ICiELOObd5DF5uJEATi77CRvHiiRuMU0"
 NEWS_NOTIFICATE = set()
 
-# Dizionario completo con tutti i 138 PID mappati per la Lega 1
+# Dizionario ufficiale con tutti i 138 PID mappati
 OFFICIAL_PLAYERS_MAP = {
     # RSA Riabilitazione
     2170: "De Gea", 6217: "Valle", 4409: "Bisseck", 6042: "Tavares N.", 6664: "Delprato", 7412: "Milla", 6844: "Pulisic", 7556: "Rowe", 6752: "Woltemade", 6229: "Douvikas", 2038: "Esposito Se.", 2815: "Meret", 6867: "Milinkovic-Savic V.", 7017: "Douvikas", 2155: "Rrahmani", 4463: "Saelemaekers", 5620: "Lucumì", 7599: "Dodò", 4892: "Tourè E.", 5885: "Mora", 2423: "Pulisic", 5500: "Pinamonti", 7129: "Cutrone",
@@ -153,8 +153,8 @@ OFFICIAL_PLAYERS_MAP = {
     6966: "Butez", 4317: "N'Dicka", 2514: "Belghali", 4976: "Kalulu", 4998: "Molina N.", 1850: "De Bruyne", 152: "Zielinski", 6875: "Paz N.", 5436: "Bowie", 6052: "Hojlund", 309: "Dybala", 6344: "Sanchez Ro.", 6482: "Mandas", 6320: "Doekhi", 1852: "Spinazzola", 7220: "Badiashile", 5680: "Taylor K.", 2517: "Sarr P.", 6372: "Konè M.", 7314: "Kessiè", 5995: "Raimondo", 7484: "De Ketelaere", 7347: "Adams A.",
     # Deportivo Sa Carogna
     5841: "Caprile", 5750: "Ostigard", 2296: "Miranda J.", 6869: "Ramon", 5739: "De Winter", 4179: "Gonzalez N.", 2194: "Bernardeschi", 7126: "Baturina", 6904: "Yeboah J.", 6397: "Ramos G.", 6435: "Piccoli", 610: "Gollini", 4360: "Svilar", 4734: "Mancini", 7294: "Valdepenas", 6496: "Bartesaghi", 7529: "Koulierakis", 5800: "Gudmundsson A.", 184: "Mbangula", 6833: "Sucic P.", 7070: "Camarda", 4359: "Lontani", 7561: "Krstovic",
-    # Altri bonus storici
-    5585: "Malen", 2764: "Martinez L.", 4777: "McTominay", 2379: "Rabiot", 5352: "Pinamonti", 4786: "Vlasic", 2072: "Berardi", 4933: "Colpani", 5670: "Idzes", 6204: "Kristensen T.", 7485: "Obert", 1870: "Thorstvedt", 6415: "Atta", 6684: "Volpato", 4896: "Simeone"
+    # Altri bonus storici / Chivuismo / Al-Qaeda
+    5585: "Malen", 2764: "Martinez L.", 4777: "McTominay", 2379: "Rabiot", 5352: "Pinamonti", 4786: "Vlasic", 2072: "Berardi", 4933: "Colpani", 5670: "Idzes", 6204: "Kristensen T.", 7485: "Obert", 1870: "Thorstvedt", 6415: "Atta", 6684: "Volpato", 4896: "Simeone", 2529: "Zaccagni", 2223: "Zielinski", 5373: "De Ketelaere", 5930: "Esposito F.P.", 6112: "Yildiz", 2826: "Pellegrini Lo.", 5334: "Samardzic"
 }
 
 
@@ -194,6 +194,85 @@ def fetch_match_lineup(competition_id, round_num, serie_a_round, id_home, id_awa
     except Exception as e:
         logger.error(f"Errore match lineup: {e}")
     return None
+
+
+def fetch_tabellini_analizzati(lega, round_num):
+    comp_id = lega["competition_id"]
+    calendario = lega["calendario"]
+    giornata_info = calendario.get(round_num)
+    if not giornata_info:
+        return "Giornata non presente nel calendario."
+
+    serie_a_round = giornata_info.get("serie_a", round_num + 2)
+    matches = giornata_info.get("matches", [])
+
+    report = f"📊 <b>DETTAGLIO UFFICIALE {giornata_info['nome'].upper()}</b>\n"
+
+    for m in matches:
+        h_name = m["home"]
+        a_name = m["away"]
+        id_h = NAME_TO_ID.get(h_name.lower())
+        id_a = NAME_TO_ID.get(a_name.lower())
+        h_owner = OWNER_LOOKUP.get(h_name.lower(), "")
+        a_owner = OWNER_LOOKUP.get(a_name.lower(), "")
+
+        if not id_h or not id_a:
+            continue
+
+        data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
+        score_text = m.get("score", "-")
+        p_h = m.get("p_home", "")
+        p_a = m.get("p_away", "")
+
+        report += f"\n⚔️ <b>{h_name}</b> ({h_owner}) <b>{p_h} [{score_text}] {p_a}</b> <b>{a_name}</b> ({a_owner})\n"
+
+        if not data:
+            continue
+
+        home_obj = data.get("home", {})
+        away_obj = data.get("away", {})
+
+        for team_label, team_obj, t_owner in [(h_name, home_obj, h_owner), (a_name, away_obj, a_owner)]:
+            if not isinstance(team_obj, dict):
+                continue
+
+            starts = team_obj.get("starts", [])
+            bench = team_obj.get("bench", [])
+
+            titolari_top = []
+            titolari_flop = []
+            panchina_rimpianti = []
+
+            for p in starts:
+                pid = int(p.get("pid", 0))
+                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
+                voto = float(p.get("scr", 0))
+                fvoto = float(p.get("cscr", 0))
+
+                if fvoto >= 9.5 and fvoto < 50:
+                    titolari_top.append(f"{p_name} ⚽ (FV {fvoto})")
+                elif voto <= 4.5 and voto > 0:
+                    titolari_flop.append(f"{p_name} 💩 (voto {voto})")
+
+            for p in bench:
+                pid = int(p.get("pid", 0))
+                p_name = OFFICIAL_PLAYERS_MAP.get(pid, f"Giocatore {pid}")
+                voto = float(p.get("scr", 0))
+                fvoto = float(p.get("cscr", 0))
+
+                if fvoto >= 9.5 and fvoto < 50:
+                    panchina_rimpianti.append(f"GOL DI {p_name.upper()} (FV {fvoto})")
+                elif voto >= 7.0 and voto < 50:
+                    panchina_rimpianti.append(f"{p_name} (voto {voto})")
+
+            if titolari_top:
+                report += f"  • {team_label} - Protagonisti: {', '.join(titolari_top)}\n"
+            if titolari_flop:
+                report += f"  • {team_label} - Disastri: {', '.join(titolari_flop)}\n"
+            if panchina_rimpianti:
+                report += f"  ⚠️ <b>PANCHINA {t_owner.upper()}:</b> {', '.join(panchina_rimpianti)} lasciati fuori!\n"
+
+    return report
 
 
 def fetch_classifica(slug, competition_id):
@@ -251,6 +330,64 @@ def get_calendario_testo(calendario, target_round=None):
         else:
             testo += f"• <b>{h}</b> 🆚 <b>{a}</b>\n"
     return testo
+
+
+def genera_recap_ai(dati_classifica, dati_tabellino, nome_lega):
+    if not client:
+        return "⚠️ API Key Gemini non configurata."
+    prompt = f"""
+    Sei il commentatore sportivo più caustico, spietato ed esilarante d'Italia. 
+    Scrivi il recap ufficiale dell'ultima giornata per la lega: {nome_lega}.
+
+    Classifica attuale:
+    {dati_classifica}
+
+    DATI UFFICIALI PARTITE, MARCATORI E PANCHINE:
+    {dati_tabellino}
+
+    LINEE GUIDA RIGIDE:
+    1. Prendi di mira direttamente i proprietari storici (Giaime, Spoleto, Manuel, Gibo, Gabbo, Ciccio, Loffredo, Ernesto).
+    2. SE QUALCUNO HA LASCIATO GOL O BONUS IN PANCHINA, MASSACRALO SENZA PIETÀ! Fagli notare quanto è incompetente citando i nomi dei calciatori rimasti fuori.
+    3. Analizza le beffe dei punteggi (vittorie per mezzo punto, pareggi rubati).
+    4. Usa solo formato HTML di Telegram: <b>grassetto</b>, <i>corsivo</i>. MAI DOPPI ASTERISCHI (**).
+    5. Struttura del messaggio:
+       - 📝 <b>RECAP DI GIORNATA: {nome_lega.upper()}</b> 🍿
+       - Frase d'apertura tagliente.
+       - ⚽️ <b>SCONTRI E DISASTRI:</b> Analizza le partite calde citando chi ha segnato e chi ha sbagliato la formazione.
+       - 🍀 <b>LO SCULATO:</b> Chi vince col minimo sforzo.
+       - 💩 <b>IL BIDONE D'ORO:</b> Chi ha buttato via punti lasciando gol in panca o chi è ultimo.
+       - 🤡 Chiusura con insulto corale.
+
+    Massimo 280 parole.
+    """
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
+        return response.text.replace("**", "<b>").replace("</b><b>", "")
+    except Exception as e:
+        logger.error(f"Errore Gemini: {e}")
+        return "⚠️ Errore generazione recap."
+
+
+def genera_alert_infortunio_ai(calciatore, squadra, proprietario, notizia_testo):
+    if not client:
+        return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
+    prompt = f"""
+    Sei un bot caustico di Fantacalcio. Notizia ricevuta: "{notizia_testo}".
+    Il calciatore è {calciatore}, della squadra {squadra} (proprietario: {proprietario}).
+    Prendi per il culo {proprietario} per la perdita del calciatore.
+    Usa solo tag HTML <b>grassetto</b>. Massimo 50 parole.
+    """
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
+        return response.text.replace("**", "<b>")
+    except Exception:
+        return f"🚨 <b>ALLERTA INFORTUNIO!</b>\n\nBrutte notizie per <b>{proprietario}</b> ({squadra}): novità su <b>{calciatore}</b>!\n<i>{notizia_testo}</i>"
 
 
 def get_lega_autorizzata(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -330,76 +467,14 @@ async def cmd_test_dettaglio(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if update.effective_user.id != ADMIN_TELEGRAM_ID:
         return
 
-    lega = LEGHE[CHAT_ID_LEGA_1]
-    comp_id = lega["competition_id"]
-    round_num = 2
-    serie_a_round = 4
+    lega = get_lega_autorizzata(update, context) or LEGHE[CHAT_ID_LEGA_1]
+    giornata = 2
+    if context.args and context.args[0].isdigit():
+        giornata = int(context.args[0])
 
-    calendario = lega["calendario"]
-    matches = calendario.get(round_num, {}).get("matches", [])
-
-    squadra_cercata = " ".join(context.args).strip().lower()
-    
-    if not squadra_cercata:
-        elenco_squadre = "⚠️ <b>Specifica la squadra!</b> Esempio: <code>/test_dettaglio CHIVUISMO</code>\n\nSquadre in campo in questa giornata:\n"
-        for m in matches:
-            elenco_squadre += f"• {m['home']} vs {m['away']}\n"
-        await update.message.reply_text(elenco_squadre, parse_mode="HTML")
-        return
-
-    match_trovato = None
-    is_home = True
-    for m in matches:
-        if squadra_cercata in m["home"].lower():
-            match_trovato = m
-            is_home = True
-            break
-        elif squadra_cercata in m["away"].lower():
-            match_trovato = m
-            is_home = False
-            break
-
-    if not match_trovato:
-        await update.message.reply_text("Squadra non trovata in questa giornata.")
-        return
-
-    h_name = match_trovato["home"]
-    a_name = match_trovato["away"]
-    id_h = NAME_TO_ID.get(h_name.lower())
-    id_a = NAME_TO_ID.get(a_name.lower())
-
-    data = fetch_match_lineup(comp_id, round_num, serie_a_round, id_h, id_a)
-    if not data:
-        await update.message.reply_text("Errore nel recupero della formazione dal server.")
-        return
-
-    target_team_label = h_name if is_home else a_name
-    target_team_obj = data.get("home", {}) if is_home else data.get("away", {})
-
-    if not target_team_obj or not isinstance(target_team_obj, dict):
-        await update.message.reply_text("Formazione non ancora disponibile per questa squadra.")
-        return
-
-    starts = target_team_obj.get("starts", [])
-    bench = target_team_obj.get("bench", [])
-
-    testo = f"🛡 <b>ESTRAZIONE ROSA SCHIERATA: {target_team_label.upper()}</b>\n\n<b>TITOLARI:</b>\n"
-    for p in starts:
-        pid = int(p.get("pid", 0))
-        p_name = OFFICIAL_PLAYERS_MAP.get(pid, "Sconosciuto")
-        voto = p.get("scr", 0)
-        fvoto = p.get("cscr", 0)
-        testo += f"• <code>PID {pid}</code> ➔ {p_name} (Voto: {voto}, FV: {fvoto})\n"
-
-    testo += "\n<b>PANCHINA:</b>\n"
-    for p in bench:
-        pid = int(p.get("pid", 0))
-        p_name = OFFICIAL_PLAYERS_MAP.get(pid, "Sconosciuto")
-        voto = p.get("scr", 0)
-        fvoto = p.get("cscr", 0)
-        testo += f"• <code>PID {pid}</code> ➔ {p_name} (Voto: {voto}, FV: {fvoto})\n"
-
-    await update.message.reply_text(testo[:4000], parse_mode="HTML")
+    await update.message.reply_text(f"🔍 Scarico tabellini ufficiali con mappa PID per <b>{lega['nome']}</b> (G{giornata})...", parse_mode="HTML")
+    res = fetch_tabellini_analizzati(lega, giornata)
+    await update.message.reply_text(res[:4000], parse_mode="HTML")
 
 
 async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -413,7 +488,8 @@ async def cmd_test_recap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(f"⏳ Generazione recap chirurgico per <b>{lega['nome']}</b>...", parse_mode="HTML")
     classifica_testo = fetch_classifica(lega["slug"], lega["competition_id"])
-    recap = genera_recap_ai(classifica_testo, "Test recap avviato", lega["nome"])
+    dati_tabellino = fetch_tabellini_analizzati(lega, 2)
+    recap = genera_recap_ai(classifica_testo, dati_tabellino, lega["nome"])
     try:
         await update.message.reply_text(recap, parse_mode="HTML")
     except Exception:
@@ -428,6 +504,28 @@ async def check_infortuni_e_news(app):
             entry_id = entry.get("id") or entry.get("link")
             if entry_id in NEWS_NOTIFICATE:
                 continue
+
+            titolo = entry.get("title", "")
+            sommario = entry.get("summary", "")
+            testo_news = f"{titolo} - {sommario}"
+
+            parole_chiave = ["infortunio", "lesione", "stop", "distorsione", "salta", "operazione", "ceduto", "ufficiale"]
+            if any(k in testo_news.lower() for k in parole_chiave):
+                for chat_id, lega in LEGHE.items():
+                    if chat_id == 0:
+                        continue
+                    rose = lega["rose"]
+                    for team_name, players in rose.items():
+                        for p in players:
+                            if p.lower() in testo_news.lower() and len(p) > 3:
+                                owner = OWNER_LOOKUP.get(team_name.lower(), "Mister")
+                                alert_msg = genera_alert_infortunio_ai(p, team_name, owner, testo_news)
+                                try:
+                                    await app.bot.send_message(chat_id=chat_id, text=alert_msg, parse_mode="HTML")
+                                except Exception:
+                                    await app.bot.send_message(chat_id=chat_id, text=alert_msg)
+                                break
+
             NEWS_NOTIFICATE.add(entry_id)
     except Exception as e:
         logger.error(f"Errore feed news: {e}")
@@ -438,6 +536,28 @@ async def background_checker(app):
     while True:
         try:
             await check_infortuni_e_news(app)
+
+            session = get_fanta_session()
+            if session:
+                for chat_id, config in LEGHE.items():
+                    if chat_id == 0 or not config["slug"]:
+                        continue
+                    url = f"https://leghe.fantacalcio.it/servizi/v1_legheCompetizione/classificagiornate?alias_lega={config['slug']}&id_competizione={config['competition_id']}&giornata_inizio=1&giornata_fine=38"
+                    res = session.get(url, timeout=10)
+                    if res.status_code == 200:
+                        rows = res.json().get("data", [])
+                        num_giocate = max((r.get("g", 0) for r in rows), default=0)
+                        if num_giocate > config["ultima_giornata"] and config["ultima_giornata"] != 0:
+                            classifica = fetch_classifica(config["slug"], config["competition_id"])
+                            tabellino = fetch_tabellini_analizzati(config, num_giocate)
+                            recap = genera_recap_ai(classifica, tabellino, config["nome"])
+                            try:
+                                await app.bot.send_message(chat_id=chat_id, text=recap, parse_mode="HTML")
+                            except Exception:
+                                await app.bot.send_message(chat_id=chat_id, text=recap)
+                            config["ultima_giornata"] = num_giocate
+                        elif config["ultima_giornata"] == 0:
+                            config["ultima_giornata"] = num_giocate
         except Exception as e:
             logger.error(f"Errore background: {e}")
         await asyncio.sleep(1200)
@@ -459,7 +579,7 @@ def main():
     app.add_handler(CommandHandler("test_recap", cmd_test_recap))
     app.add_handler(CommandHandler("test_dettaglio", cmd_test_dettaglio))
 
-    logger.info("Bot Fantacalcio operativo con controllo anti-crash.")
+    logger.info("Bot Fantacalcio operativo con tutte le funzioni e mappatura completa.")
     app.run_polling()
 
 
