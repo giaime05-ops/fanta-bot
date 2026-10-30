@@ -134,7 +134,7 @@ LEGHE = {
     1: {
         "num": 1,
         "chat_id": CHAT_ID_LEGA_1,
-        "slug": "fanta4reich",
+        "slug": os.getenv("SLUG_LEGA_1", "fanta4reich"),
         "competition_id": 206672,
         "nome": "Fanta4Reich",
         "calendario": CALENDARIO_LEGA_1,
@@ -145,7 +145,7 @@ LEGHE = {
     2: {
         "num": 2,
         "chat_id": CHAT_ID_LEGA_2,
-        "slug": "fantacalcio-stalloni-26-27",
+        "slug": os.getenv("SLUG_LEGA_2", "fantacalcio-stalloni-26-27"),
         "competition_id": 320101,
         "nome": "Fantacalcio Stalloni",
         "calendario": CALENDARIO_LEGA_2,
