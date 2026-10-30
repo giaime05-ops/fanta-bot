@@ -15,6 +15,9 @@ from google import genai
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+# httpx a livello INFO stampa nei log l'URL con il token del bot: lo silenziamo.
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 FANTA_COOKIE = os.getenv("FANTA_COOKIE", "")
 FANTA_BEARER_TOKEN = os.getenv("FANTA_BEARER_TOKEN", "")
